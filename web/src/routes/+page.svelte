@@ -1015,4 +1015,128 @@
 			line-height: 1.14;
 		}
 	}
+	@media (min-width: 761px) and (max-height: 900px) {
+		:global(.slide .content .prose h1) {
+			margin-bottom: 0.82rem;
+			line-height: 1.02;
+		}
+		:global(.slide .content .prose h2) {
+			margin-bottom: 0.82rem;
+			line-height: 1.05;
+		}
+		:global(.slide .content .prose p) {
+			margin-top: 0.72rem;
+			line-height: 1.28;
+		}
+		:global(.slide .content .prose ul) {
+			gap: 0.62rem;
+			margin-top: 0.78rem;
+		}
+		:global(.slide .content .prose hr) {
+			margin: 1.1rem 0 1.15rem;
+		}
+		:global(.slide .content .prose .url-previews) {
+			gap: 0.72rem;
+			margin-top: 0.75rem;
+		}
+		:global(.slide .content .prose .url-preview) {
+			padding: 0.62rem;
+		}
+		:global(.slide .content .prose .url-preview img) {
+			height: clamp(92px, 16dvh, 145px);
+		}
+		:global(.slide .content .prose .url-preview .preview-caption) {
+			gap: 0.24rem;
+			margin-top: 0.42rem;
+		}
+		:global(.slide .content .prose .url-preview .preview-source) {
+			font-size: 0.64rem;
+			letter-spacing: 0.08em;
+		}
+		:global(.slide .content .prose .url-preview strong) {
+			font-size: 0.9rem;
+			line-height: 1.08;
+		}
+		:global(.slide .content .prose .url-preview .preview-note) {
+			font-size: 0.76rem;
+			line-height: 1.22;
+		}
+		:global(.slide .content .prose .evidence-split) {
+			gap: 1.05rem;
+			align-items: center;
+		}
+		:global(.slide .content .prose .evidence-card img) {
+			max-height: 44dvh;
+		}
+		:global(.slide .content .prose .repo-preview-grid) {
+			gap: 0.72rem;
+			margin-top: 0.76rem;
+		}
+		:global(.slide .content .prose .workflow-showcase) {
+			gap: 0.75rem 1rem;
+		}
+		:global(.slide .content .prose .workflow-copy h2) {
+			margin-bottom: 0.55rem;
+		}
+		:global(.slide .content .prose .workflow-copy p) {
+			font-size: 0.98rem;
+			line-height: 1.25;
+		}
+		:global(.slide .content .prose .workflow-article img) {
+			max-height: 28dvh;
+		}
+		:global(.slide .content .prose .workflow-article span) {
+			padding: 0.5rem 0.65rem;
+			font-size: 0.6rem;
+		}
+		:global(.slide .content .prose .workflow-showcase .workflow-example-links) {
+			gap: 0.7rem;
+		}
+		:global(.slide .content .prose .workflow-example-links .url-preview) {
+			min-height: 0;
+			padding: 0.65rem;
+		}
+		:global(.slide .content .prose .verdict-compare) {
+			gap: clamp(1rem, 3vw, 2rem);
+			margin-top: 0.85rem;
+		}
+		:global(.slide .content .prose .verdict) {
+			gap: 0.5rem;
+		}
+		:global(.slide .content .prose .verdict-call) {
+			font-size: clamp(1.25rem, 1rem + 1.2vw, 1.8rem);
+		}
+		:global(.slide .content .prose .verdict-tweet img) {
+			height: min(50dvh, 430px);
+		}
+		:global(.slide .content .prose .verdict-when) {
+			font-size: 0.64rem;
+		}
+		:global(.slide .content .prose .prose-program-grid) {
+			gap: 0.72rem;
+			margin-top: 0.7rem;
+		}
+		:global(.slide .content .prose .prose-program) {
+			gap: 0.38rem;
+			padding: 0.72rem;
+		}
+		:global(.slide .content .prose .prose-program-label) {
+			font-size: 0.62rem;
+		}
+		:global(.slide .content .prose .prose-program strong) {
+			font-size: 0.92rem;
+		}
+		:global(.slide .content .prose .prose-program-points) {
+			gap: 0.25rem;
+		}
+		:global(.slide .content .prose .prose-program-points li) {
+			font-size: 0.72rem;
+			line-height: 1.18;
+		}
+		:global(.slide .content .prose .prose-program pre) {
+			padding: 0.46rem;
+			font-size: 0.58rem;
+			line-height: 1.18;
+		}
+	}
 </style>

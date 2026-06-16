@@ -233,4 +233,45 @@
 			-webkit-line-clamp: 2;
 		}
 	}
+
+	@media (min-width: 761px) and (max-height: 900px) {
+		.applied-list {
+			margin-top: 0.58rem;
+		}
+
+		.applied-example {
+			grid-template-columns: 1.9rem minmax(0, 1fr);
+			gap: 0.58rem;
+			padding: 0.38rem 0;
+		}
+
+		.example-icon {
+			width: 1.9rem;
+			height: 1.9rem;
+			border-radius: 6px;
+		}
+
+		.example-icon :global(svg) {
+			width: 0.98rem;
+			height: 0.98rem;
+		}
+
+		.example-copy {
+			gap: 0.14rem;
+		}
+
+		.example-row strong {
+			font-size: 0.86rem;
+			line-height: 1.06;
+		}
+
+		.example-source {
+			font-size: 0.58rem;
+		}
+
+		.example-body {
+			font-size: 0.74rem;
+			line-height: 1.18;
+		}
+	}
 </style>

@@ -306,17 +306,15 @@ function assertUnifiedWidths(caseName, result) {
 		fail(`${caseName}: slide content overflows horizontally.\n${detail}`);
 	}
 
-	if (caseName.includes('mobile')) {
-		const verticalOverflowing = result.items.filter((item) => item.verticalOverflow);
-		if (verticalOverflowing.length > 0) {
-			const detail = verticalOverflowing
-				.map(
-					(item) =>
-						`${item.id} ${item.label}: slide ${item.slideHeight}px, content ${item.contentHeight}px, viewport ${item.viewportHeight}px`
-				)
-				.join('\n');
-			fail(`${caseName}: slide content exceeds the viewport vertically.\n${detail}`);
-		}
+	const verticalOverflowing = result.items.filter((item) => item.verticalOverflow);
+	if (verticalOverflowing.length > 0) {
+		const detail = verticalOverflowing
+			.map(
+				(item) =>
+					`${item.id} ${item.label}: slide ${item.slideHeight}px, content ${item.contentHeight}px, viewport ${item.viewportHeight}px`
+			)
+			.join('\n');
+		fail(`${caseName}: slide content exceeds the viewport vertically.\n${detail}`);
 	}
 }
 
@@ -459,6 +457,8 @@ try {
 
 	for (const viewport of [
 		{ name: 'desktop', width: 1440, height: 900 },
+		{ name: 'short-desktop', width: 1366, height: 768 },
+		{ name: 'short-wide-desktop', width: 1280, height: 720 },
 		{ name: 'mobile', width: 390, height: 844 },
 		{ name: 'narrow-mobile', width: 360, height: 740 }
 	]) {

@@ -41,6 +41,16 @@
 	}
 }
 
+@media (min-width: 761px) and (max-height: 900px) {
+	:root {
+		--fs-title: clamp(2rem, 5vw, 4.1rem);
+		--fs-heading: clamp(1.42rem, 3vw, 2.42rem);
+		--fs-body: clamp(0.98rem, 0.76rem + 0.56vw, 1.28rem);
+		--fs-eyebrow: clamp(0.64rem, 0.54rem + 0.18vw, 0.82rem);
+		--pad: clamp(2.05rem, 4.1vw, 4rem);
+	}
+}
+
 /* ============================================================================
    BASE
    ========================================================================== */
@@ -85,6 +95,12 @@ a:not([data-slot='button']) {
 @media (max-width: 380px) and (max-height: 760px) {
 	.eyebrow {
 		margin-bottom: 0.58rem;
+	}
+}
+
+@media (min-width: 761px) and (max-height: 900px) {
+	.eyebrow {
+		margin-bottom: 0.7rem;
 	}
 }
 

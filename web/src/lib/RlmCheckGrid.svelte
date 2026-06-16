@@ -183,4 +183,34 @@
 			color: currentColor;
 		}
 	}
+
+	@media (min-width: 761px) and (max-height: 900px) {
+		.rlm-check-table :global([data-slot='table-head']) {
+			height: 2.2rem;
+			padding-inline: 0.35rem;
+		}
+
+		.rlm-check-table :global([data-slot='table-cell']) {
+			padding: 0.52rem 0.35rem;
+		}
+
+		.rlm-check-table :global([data-slot='table-head'] span) {
+			font-size: 0.64rem;
+		}
+
+		.rlm-check-table :global([data-slot='table-cell'] span:first-child) {
+			font-size: 0.8rem;
+			line-height: 1.08;
+		}
+
+		.rlm-check-table :global([data-slot='table-cell'] span:last-child) {
+			font-size: 0.64rem;
+			line-height: 1.12;
+		}
+
+		.rlm-check-table :global(svg) {
+			width: 1rem;
+			height: 1rem;
+		}
+	}
 </style>

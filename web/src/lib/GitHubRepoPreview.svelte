@@ -391,4 +391,56 @@
 			font-size: 0.62rem;
 		}
 	}
+
+	@media (min-width: 761px) and (max-height: 900px) {
+		:global(.repo-preview) {
+			gap: 0.58rem;
+			padding-block: 0.75rem;
+		}
+
+		:global(.repo-header),
+		:global(.repo-content),
+		:global(.repo-actions) {
+			padding-inline: 0.85rem;
+		}
+
+		.repo-heading {
+			gap: 0.48rem;
+		}
+
+		.github-mark {
+			width: 1.65rem;
+			height: 1.65rem;
+		}
+
+		:global(.repo-title) {
+			font-size: clamp(0.98rem, 1.4vw, 1.3rem);
+		}
+
+		:global(.repo-description) {
+			margin-top: 0.32rem;
+			font-size: clamp(0.72rem, 1.05vw, 0.86rem);
+			line-height: 1.25;
+		}
+
+		.repo-meta {
+			gap: 0.22rem 0.48rem;
+		}
+
+		.repo-meta-item {
+			min-height: 1rem;
+			gap: 0.22rem;
+			font-size: 0.62rem;
+		}
+
+		:global(.repo-actions) {
+			gap: 0.38rem;
+		}
+
+		:global(.repo-actions) :global([data-slot='button']) {
+			min-height: 1.8rem;
+			padding-inline: 0.5rem;
+			font-size: 0.66rem;
+		}
+	}
 </style>

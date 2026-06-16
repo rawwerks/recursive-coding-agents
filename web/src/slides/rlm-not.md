@@ -13,4 +13,4 @@ eyebrow: The RLM rubric
 
 <RlmCheckGrid />
 
-Only an RLM checks every operational box here; the full rubric is G1-G7.
+Only an RLM checks every operational box here.

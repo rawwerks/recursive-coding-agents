@@ -6,7 +6,9 @@ eyebrow: Thesis
 
 # Today's agents are <span class="nowrap">mis-managed</span> geniuses
 
-The intelligence is there. The missing layer is how we specify, manage, reuse, and verify the work.
+The intelligence is there.
+
+The missing layer is how we specify, manage, reuse, and verify the work.
 
 <div class="url-previews">
 	<a class="url-preview" href="https://www.turingpost.com/p/openprose-a-language-for-reliable-agents" target="_blank" rel="noopener noreferrer">

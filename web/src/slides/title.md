@@ -2,6 +2,7 @@
 label: Title
 variant: title
 eyebrow: "AI Engineer World's Fair · 2026"
+scroll_cue: true
 ---
 
 # Recursive Coding Agents

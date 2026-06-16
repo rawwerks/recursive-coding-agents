@@ -20,3 +20,7 @@ eyebrow: Recursive Language Models
 		<img src="/rlm-x-article-card.png" alt="X card for the RAW.works article RLMs are the new reasoning models, including article preview text and social proof" />
 	</a>
 </div>
+
+<p class="slide-footer-claim">
+	<a href="https://raw.works/rlms-are-the-new-reasoning-models/" target="_blank" rel="noopener noreferrer"><strong>RLMs are the new reasoning models.</strong></a>
+</p>

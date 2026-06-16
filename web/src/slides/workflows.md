@@ -1,18 +1,37 @@
 ---
 label: What changed — dynamic workflows
-variant: split
+alt: true
 ---
 
-<div class="evidence-split">
-<div>
+<div class="workflow-showcase">
+<div class="workflow-copy">
 
-## What flipped it: dynamic workflows.
+## Dynamic workflows made Claude Code recursive.
 
-Claude writes an [orchestration script](https://code.claude.com/docs/en/scheduled-tasks) on the fly, then spins up a coordinated fleet of subagents in parallel — enough to meet the full RLM criteria.
-
-Runnable proof in the repo.
+Claude can write an [orchestration script](https://claude.com/blog/introducing-dynamic-workflows-in-claude-code), then run a fleet of subagents. The line is whether the **model chooses the decomposition**, or the script fixes it ahead of time.
 
 </div>
 
-<a class="evidence-card" href="https://claude.com/blog/introducing-dynamic-workflows-in-claude-code" target="_blank" rel="noopener noreferrer"><img src="/dynamic-workflows-preview.png" alt="Claude Code blog post: Introducing dynamic workflows" /></a>
+<a class="workflow-article" href="https://claude.com/blog/introducing-dynamic-workflows-in-claude-code" target="_blank" rel="noopener noreferrer">
+	<img src="/dynamic-workflows-preview-compact.png" alt="Claude Code blog post: Introducing dynamic workflows" />
+	<span>Claude Code blog · dynamic workflows</span>
+</a>
+
+<div class="workflow-example-links">
+	<a class="url-preview" href="https://github.com/rawwerks/recursive-coding-agents/tree/main/claude-dynamic-workflows/rlm" target="_blank" rel="noopener noreferrer">
+		<span class="preview-caption">
+			<span class="preview-source">RLM example · model-chosen split</span>
+			<strong>file-handle-clean.workflow.js</strong>
+			<span class="preview-note">Decomposer reads a corpus handle, writes slice handles, then subagents extract and validate those slices.</span>
+		</span>
+	</a>
+
+	<a class="url-preview" href="https://github.com/rawwerks/recursive-coding-agents/tree/main/claude-dynamic-workflows/not-rlm" target="_blank" rel="noopener noreferrer">
+		<span class="preview-caption">
+			<span class="preview-source">not-RLM contrast · script-fixed split</span>
+			<strong>hardcoded-map-reduce.workflow.js</strong>
+			<span class="preview-note">It has handles, subagents, and state, but the windows, fan-out, reducer, and stop rule are fixed in code.</span>
+		</span>
+	</a>
+</div>
 </div>

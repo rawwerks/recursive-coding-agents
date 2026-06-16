@@ -372,6 +372,200 @@ try {
 			`${viewport.name} slide layout assertions passed (${result.items.length} slides, width ${result.items[0].width}px).`
 		);
 	}
+
+	const keyboardExpression = `((async () => {
+		const deck = document.querySelector('.deck');
+		const slides = Array.from(document.querySelectorAll('.slide'));
+		if (!deck || slides.length < 10) {
+			return { error: 'Deck must render at least 10 slides to test 0 -> slide 10.' };
+		}
+
+		const originalMatchMedia = window.matchMedia;
+		window.matchMedia = (query) => {
+			if (query.includes('prefers-reduced-motion')) {
+				return {
+					matches: true,
+					media: query,
+					onchange: null,
+					addListener() {},
+					removeListener() {},
+					addEventListener() {},
+					removeEventListener() {},
+					dispatchEvent() {
+						return false;
+					}
+				};
+			}
+			return originalMatchMedia.call(window, query);
+		};
+
+		const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+		const activeSlideId = () => document.querySelector('.dot.active')?.getAttribute('href')?.slice(1) ?? null;
+		const topSlideId = () => {
+			const deckTop = deck.getBoundingClientRect().top;
+			return slides
+				.map((slide) => ({
+					id: slide.id,
+					distance: Math.abs(slide.getBoundingClientRect().top - deckTop)
+				}))
+				.sort((a, b) => a.distance - b.distance)[0]?.id ?? null;
+		};
+		const waitForSlide = async (expected) => {
+			const deadline = performance.now() + 2000;
+			while (performance.now() < deadline) {
+				if (activeSlideId() === expected || topSlideId() === expected) return true;
+				await delay(50);
+			}
+			return false;
+		};
+
+		try {
+			const checks = [
+				['1', 'slide-1'],
+				['2', 'slide-2'],
+				['3', 'slide-3'],
+				['4', 'slide-4'],
+				['0', 'slide-10']
+			];
+			const results = [];
+			for (const [key, expected] of checks) {
+				const event = new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true });
+				window.dispatchEvent(event);
+				const reached = await waitForSlide(expected);
+				results.push({
+					key,
+					expected,
+					reached,
+					defaultPrevented: event.defaultPrevented,
+					active: activeSlideId(),
+					top: topSlideId()
+				});
+			}
+
+			const failed = results.find((result) => !result.reached || !result.defaultPrevented);
+			if (failed) {
+				return {
+					error: \`Number key \${failed.key} did not navigate to \${failed.expected}.\`,
+					results
+				};
+			}
+
+			return { results };
+		} finally {
+			window.matchMedia = originalMatchMedia;
+		}
+	})())`;
+
+	const keyboardResult = await evaluateInPage(
+		chromium.page,
+		{ name: 'desktop keyboard', width: 1440, height: 900 },
+		keyboardExpression
+	);
+	if (keyboardResult.error) fail(`${keyboardResult.error}\n${JSON.stringify(keyboardResult.results, null, 2)}`);
+	console.log('keyboard slide shortcuts passed (1-4 and 0 -> slide 10).');
+
+	const scrollCueExpression = `((async () => {
+		const deck = document.querySelector('.deck');
+		const firstSlide = document.querySelector('#slide-1');
+		const secondSlide = document.querySelector('#slide-2');
+		const cue = document.querySelector('#slide-1 .scroll-cue');
+		if (!deck || !firstSlide || !secondSlide || !cue) {
+			return { error: 'Title slide must render a .scroll-cue link to slide 2.' };
+		}
+		if (cue.getAttribute('href') !== '#slide-2') {
+			return { error: \`Title scroll cue href must be #slide-2; found \${cue.getAttribute('href')}.\` };
+		}
+
+		const originalMatchMedia = window.matchMedia;
+		window.matchMedia = (query) => {
+			if (query.includes('prefers-reduced-motion')) {
+				return {
+					matches: true,
+					media: query,
+					onchange: null,
+					addListener() {},
+					removeListener() {},
+					addEventListener() {},
+					removeEventListener() {},
+					dispatchEvent() {
+						return false;
+					}
+				};
+			}
+			return originalMatchMedia.call(window, query);
+		};
+
+		const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+		const topSlideId = () => {
+			const deckTop = deck.getBoundingClientRect().top;
+			return Array.from(document.querySelectorAll('.slide'))
+				.map((slide) => ({
+					id: slide.id,
+					distance: Math.abs(slide.getBoundingClientRect().top - deckTop)
+				}))
+				.sort((a, b) => a.distance - b.distance)[0]?.id ?? null;
+		};
+		const waitForSlide = async (expected) => {
+			const deadline = performance.now() + 2000;
+			while (performance.now() < deadline) {
+				if (topSlideId() === expected) return true;
+				await delay(50);
+			}
+			return false;
+		};
+
+		try {
+			deck.scrollTop = firstSlide.offsetTop;
+			await delay(100);
+
+			const cueRect = cue.getBoundingClientRect();
+			const slideRect = firstSlide.getBoundingClientRect();
+			const cueCenter = cueRect.left + cueRect.width / 2;
+			const slideCenter = slideRect.left + slideRect.width / 2;
+			const centerDrift = Math.abs(cueCenter - slideCenter);
+			const bottomGap = Math.round(slideRect.bottom - cueRect.bottom);
+			if (centerDrift > 1.5 || bottomGap < 8) {
+				return {
+					error: 'Title scroll cue must stay bottom-centered on the title slide.',
+					centerDrift,
+					bottomGap,
+					cueRect: {
+						left: Math.round(cueRect.left),
+						right: Math.round(cueRect.right),
+						bottom: Math.round(cueRect.bottom)
+					},
+					slideRect: {
+						left: Math.round(slideRect.left),
+						right: Math.round(slideRect.right),
+						bottom: Math.round(slideRect.bottom)
+					}
+				};
+			}
+
+			cue.click();
+			const reached = await waitForSlide('slide-2');
+			if (!reached) {
+				return {
+					error: 'Clicking title scroll cue must navigate the deck to slide 2.',
+					top: topSlideId(),
+					scrollTop: deck.scrollTop,
+					slide2OffsetTop: secondSlide.offsetTop
+				};
+			}
+
+			return { reached, top: topSlideId() };
+		} finally {
+			window.matchMedia = originalMatchMedia;
+		}
+	})())`;
+
+	const scrollCueResult = await evaluateInPage(
+		chromium.page,
+		{ name: 'desktop title cue', width: 1440, height: 900 },
+		scrollCueExpression
+	);
+	if (scrollCueResult.error) fail(`${scrollCueResult.error}\n${JSON.stringify(scrollCueResult, null, 2)}`);
+	console.log('title scroll cue click passed (#slide-1 .scroll-cue -> slide 2).');
 } finally {
 	if (chromium) await chromium.stop();
 	if (vite) {

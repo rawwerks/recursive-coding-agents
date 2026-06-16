@@ -32,11 +32,25 @@
 		target?.scrollIntoView({ behavior: reduceMotion() ? 'auto' : 'smooth', block: 'start' });
 	}
 
-	/** Keyboard nav: arrows + PageUp/PageDown + Home/End + Space (Shift+Space back). */
+	function slideIndexForNumberKey(event: KeyboardEvent) {
+		if (event.altKey || event.ctrlKey || event.metaKey) return null;
+		if (/^[1-9]$/.test(event.key)) return Number(event.key) - 1;
+		if (event.key === '0') return 9;
+		return null;
+	}
+
+	/** Keyboard nav: arrows + PageUp/PageDown + Home/End + Space + number keys. */
 	function onKeydown(event: KeyboardEvent) {
 		// Don't hijack keys while the user is typing in a form field or editing text.
 		const t = event.target as HTMLElement | null;
 		if (t && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))) return;
+
+		const numberIndex = slideIndexForNumberKey(event);
+		if (numberIndex !== null && numberIndex < slides.length) {
+			event.preventDefault();
+			goTo(numberIndex);
+			return;
+		}
 
 		switch (event.key) {
 			case 'ArrowDown':

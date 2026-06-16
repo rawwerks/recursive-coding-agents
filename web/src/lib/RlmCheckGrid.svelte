@@ -17,7 +17,7 @@
 		{ sys: 'Coding agent + bash', tag: 'CodeAct-style, one session', marks: [1, 0, 0, 1, 0], rlm: false },
 		{ sys: 'Agentic loops', tag: "Ralph + the 2026 'loop engineering' wave", marks: [1, 0, 0, 0, 1], rlm: false },
 		{ sys: 'Hardcoded map-reduce', tag: 'developer-authored pipeline — e.g. λ-RLM', marks: [1, 1, 1, 0, 1], rlm: false },
-		{ sys: 'Recursive Language Model', tag: 'passes every gate', marks: [1, 1, 1, 1, 1], rlm: true }
+		{ sys: 'Recursive Language Model', tag: 'passes every check', marks: [1, 1, 1, 1, 1], rlm: true }
 	];
 </script>
 

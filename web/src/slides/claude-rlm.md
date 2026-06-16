@@ -1,5 +1,5 @@
 ---
-label: Is Claude Code an RLM?
+label: Is Claude Code a RLM?
 variant: split
 eyebrow: Claude Code
 ---

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
-import { mkdtemp, rm } from 'node:fs/promises';
-import { tmpdir } from 'node:os';
+import { mkdir, mkdtemp, rm } from 'node:fs/promises';
+import { homedir } from 'node:os';
 import path from 'node:path';
 import { spawn } from 'node:child_process';
 import net from 'node:net';
@@ -8,6 +8,7 @@ import process from 'node:process';
 
 const host = '127.0.0.1';
 const chromiumBin = process.env.CHROMIUM_BIN ?? 'chromium';
+const scratchRoot = path.join(homedir(), 'scratch', 'recursive-coding-agents-talk', 'visual-qa');
 
 const expected = {
 	dark: {
@@ -122,7 +123,8 @@ async function startVite() {
 
 async function startChromium(url) {
 	const port = await getFreePort();
-	const profile = await mkdtemp(path.join(tmpdir(), 'skps-rendered-theme-'));
+	await mkdir(scratchRoot, { recursive: true });
+	const profile = await mkdtemp(path.join(scratchRoot, 'rendered-theme-profile-'));
 	const browser = spawn(
 		chromiumBin,
 		[
@@ -192,19 +194,34 @@ async function evaluateInPage(page, expression) {
 			};
 		});
 
-		function send(method, params = {}) {
-			const id = nextId++;
-			ws.send(JSON.stringify({ id, method, params }));
-			return new Promise((resolve, reject) => pending.set(id, { resolve, reject }));
-		}
+			function send(method, params = {}) {
+				const id = nextId++;
+				ws.send(JSON.stringify({ id, method, params }));
+				return new Promise((resolve, reject) => pending.set(id, { resolve, reject }));
+			}
 
-		await send('Runtime.enable');
-		await send('Input.dispatchMouseEvent', { type: 'mouseMoved', x: 1, y: 1, button: 'none' });
-		await delay(500);
-		const result = await send('Runtime.evaluate', {
-			expression,
-			awaitPromise: true,
-			returnByValue: true
+			async function sendWithReloadRetry(method, params = {}, attempts = 4) {
+				for (let attempt = 0; attempt < attempts; attempt++) {
+					try {
+						return await send(method, params);
+					} catch (error) {
+						const message = error instanceof Error ? error.message : String(error);
+						if (!/Execution context was destroyed|Cannot find context|Inspected target navigated|Target closed/i.test(message)) {
+							throw error;
+						}
+						if (attempt === attempts - 1) throw error;
+						await delay(500);
+					}
+				}
+			}
+
+			await send('Runtime.enable');
+			await sendWithReloadRetry('Input.dispatchMouseEvent', { type: 'mouseMoved', x: 1, y: 1, button: 'none' });
+			await delay(500);
+			const result = await sendWithReloadRetry('Runtime.evaluate', {
+				expression,
+				awaitPromise: true,
+				returnByValue: true
 		});
 		if (result.exceptionDetails) fail(result.exceptionDetails.text ?? 'Browser evaluation failed.');
 		return result.result.value;
@@ -242,15 +259,13 @@ try {
 					return { error: 'Deck title not found.' };
 				}
 
-				const cta = document.querySelector('.cta');
-				if (!cta) return { error: 'Deck CTA not found.' };
+					const activeDot = document.querySelector('.dot.active .dot-visual');
+					if (!activeDot) return { error: 'Active slide indicator not found.' };
 
-				const activeDot = document.querySelector('.dot.active .dot-visual');
-				if (!activeDot) return { error: 'Active slide indicator not found.' };
-
-				const titleStyle = getComputedStyle(title);
-				const ctaStyle = getComputedStyle(cta);
-				const dotStyle = getComputedStyle(activeDot);
+					const titleStyle = getComputedStyle(title);
+					const cta = document.querySelector('.cta');
+					const ctaStyle = cta ? getComputedStyle(cta) : null;
+					const dotStyle = getComputedStyle(activeDot);
 
 				const normalizeColor = (cssValue) => {
 					const probe = document.createElement('span');
@@ -264,11 +279,11 @@ try {
 				return {
 					background: root.getPropertyValue('--background').trim(),
 					primary: root.getPropertyValue('--primary').trim(),
-					primaryForeground: root.getPropertyValue('--primary-foreground').trim(),
-					titleColor: titleStyle.color,
-					ctaBackground: ctaStyle.backgroundColor,
-					ctaColor: ctaStyle.color,
-					activeDotBackground: dotStyle.backgroundColor,
+						primaryForeground: root.getPropertyValue('--primary-foreground').trim(),
+						titleColor: titleStyle.color,
+						ctaBackground: ctaStyle?.backgroundColor ?? null,
+						ctaColor: ctaStyle?.color ?? null,
+						activeDotBackground: dotStyle.backgroundColor,
 					expectedForeground: normalizeColor('var(--foreground)'),
 					expectedPrimary: normalizeColor('var(--primary)'),
 					expectedPrimaryForeground: normalizeColor('var(--primary-foreground)')
@@ -318,24 +333,26 @@ try {
 			result[mode].expectedForeground,
 			`${mode} deck title foreground`
 		);
-		assertEqual(
-			result[mode].ctaBackground,
-			result[mode].expectedPrimary,
-			`${mode} deck CTA background`
-		);
-		assertEqual(
-			result[mode].ctaColor,
-			result[mode].expectedPrimaryForeground,
-			`${mode} deck CTA foreground`
-		);
-		assertEqual(
-			result[mode].activeDotBackground,
-			result[mode].expectedPrimary,
-			`${mode} active slide indicator background`
-		);
-		if (result[mode].ctaBackground === result[mode].ctaColor) {
-			fail(`${mode} deck CTA background and foreground resolved to the same color.`);
-		}
+			if (result[mode].ctaBackground !== null || result[mode].ctaColor !== null) {
+				assertEqual(
+					result[mode].ctaBackground,
+					result[mode].expectedPrimary,
+					`${mode} deck CTA background`
+				);
+				assertEqual(
+					result[mode].ctaColor,
+					result[mode].expectedPrimaryForeground,
+					`${mode} deck CTA foreground`
+				);
+			}
+			assertEqual(
+				result[mode].activeDotBackground,
+				result[mode].expectedPrimary,
+				`${mode} active slide indicator background`
+			);
+			if (result[mode].ctaBackground !== null && result[mode].ctaBackground === result[mode].ctaColor) {
+				fail(`${mode} deck CTA background and foreground resolved to the same color.`);
+			}
 	}
 
 	console.log('Rendered theme assertions passed.');

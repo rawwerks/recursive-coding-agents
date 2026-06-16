@@ -7,8 +7,10 @@ export const slideOrder = [
 	'rlm-not',
 	'towards-recursive-coding-agents',
 	'ypi',
+	'other-notable-projects',
+	'claude-rlm',
 	'workflows',
 	'openprose',
 	'takeaways',
-	'close'
+	'closing'
 ] as const;

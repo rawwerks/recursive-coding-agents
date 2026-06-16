@@ -6,10 +6,10 @@ eyebrow: Towards Recursive Coding Agents
 
 <div class="bridge-quotes" aria-label="Bridge quotes">
 	<blockquote class="bridge-quote bridge-quote--answer">
-		<p>Trick question: RLMs are Recursive Coding Agents.</p>
+		<p><i>Either...</i> Trick question: RLMs are Recursive Coding Agents.</p>
 	</blockquote>
 	<div class="bridge-rule" aria-hidden="true"></div>
 	<blockquote class="bridge-quote bridge-quote--prompt">
-		<p>How can we apply the principles of RLM to coding agents?</p>
+		<p><i>Or...</i> How can we apply the principles of RLM to coding agents?</p>
 	</blockquote>
 </div>

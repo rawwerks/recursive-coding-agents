@@ -11,6 +11,10 @@
 		"binding": "ASSETS",
 		"directory": ".svelte-kit/cloudflare"
 	},
+	"routes": [
+		{ "pattern": "recursivecodingagents.com", "custom_domain": true },
+		{ "pattern": "www.recursivecodingagents.com", "custom_domain": true }
+	],
 	"observability": {
 		"enabled": true
 	}

@@ -1,10 +1,9 @@
 # Claude Code Full-RLM Workflow Probe
 
-Date: 2026-06-15  
-Claude Code version: 2.1.177  
-Driven through: interactive `claudey` in tmux, with `/workflows` opened first  
-Workflow run: `wf_41a3e8cd-ab2`  
-Task id: `w92vm52fu`
+Date: 2026-06-15<br>
+Claude Code version: 2.1.177<br>
+Driven through: interactive Claude Code in tmux, with `/workflows` opened first<br>
+Public artifact: redacted run summary in `full-rlm-probe-run.json`
 
 ## Verdict
 
@@ -22,18 +21,15 @@ It does not support the broader claim that every Claude Code workflow, or Claude
 
 Repo-local artifacts:
 
-- Corpus: `experiments/claude-workflows-full-rlm/corpus.md`
-- Prompt: `experiments/claude-workflows-full-rlm/prompt.txt`
-- Generated slices: `experiments/claude-workflows-full-rlm/generated-slices/`
-- Slicer helper created by workflow subagent: `experiments/claude-workflows-full-rlm/split_corpus.py`
-- Copied workflow script: `experiments/claude-workflows-full-rlm/full-rlm-probe-workflow.js`
-- Copied workflow run record: `experiments/claude-workflows-full-rlm/full-rlm-probe-run.json`
+- Corpus: `corpus.md`
+- Prompt: `prompt.txt`
+- Generated slices: `generated-slices/`
+- Slicer helper created by workflow subagent: `split_corpus.py`
+- Copied workflow script: `full-rlm-probe-workflow.js`
+- Redacted workflow run summary: `full-rlm-probe-run.json`
 
-Original Claude artifacts:
-
-- Script: `/home/raw/.claude/projects/-home-raw-github-rawwerks-aiewf-2026-rlm-recursive-coding-agent-talk/aa3faa40-7444-4688-8359-273045ccd758/workflows/scripts/full-rlm-probe-wf_41a3e8cd-ab2.js`
-- Run record: `/home/raw/.claude/projects/-home-raw-github-rawwerks-aiewf-2026-rlm-recursive-coding-agent-talk/aa3faa40-7444-4688-8359-273045ccd758/workflows/wf_41a3e8cd-ab2.json`
-- Subagent transcripts: `/home/raw/.claude/projects/-home-raw-github-rawwerks-aiewf-2026-rlm-recursive-coding-agent-talk/aa3faa40-7444-4688-8359-273045ccd758/subagents/workflows/wf_41a3e8cd-ab2/`
+Raw Claude session journals and per-agent transcripts are retained privately and
+are not part of the public repo.
 
 ## Observed Result
 
@@ -44,6 +40,8 @@ phrase=handle-slice-subcall-aggregate
 weight_sum=114
 validator=RLM-FULL-WORKFLOW-9c8a71
 ```
+
+The validator value is a synthetic fixture, not a credential.
 
 The inactive decoy record `C` had `weight: 999` and was correctly excluded.
 
@@ -61,12 +59,11 @@ The workflow script:
 
 The run record reported:
 
-- `agentCount`: 7
+- `agent_count`: 7
 - five slice subagents: `slice:A`, `slice:B`, `slice:C`, `slice:D`, `slice:E`
 - one validator subagent: `validator`
 - one decomposer subagent: `decompose:slicer`
-- `totalTokens`: 198809
-- `totalToolCalls`: 18
+- `tool_call_count`: 18
 
 Programmatic transcript extraction showed:
 

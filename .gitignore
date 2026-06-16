@@ -7,3 +7,20 @@ Thumbs.db
 
 # Stray dependency installs at the root (the app's live in web/node_modules)
 /node_modules
+
+# Local build/runtime output
+/build
+/.svelte-kit
+/.wrangler
+/package
+
+# Local secrets and per-machine Cloudflare/dev vars
+.env
+.env.*
+!.env.example
+.dev.vars
+.dev.vars.*
+
+# Vite timestamp artifacts
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*

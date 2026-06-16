@@ -4,15 +4,15 @@ Use `/workflows` and create/run a dynamic workflow for this task.
 
 Important: the corpus is a file handle, not prompt text:
 
-@/home/raw/github-rawwerks/aiewf-2026-rlm-recursive-coding-agent-talk/experiments/claude-workflows-full-rlm/corpus.md
+@claude-dynamic-workflows/proven-run/corpus.md
 
 Write and run a workflow that satisfies these trace requirements:
 
 1. The workflow must treat the corpus file path as symbolic prompt/context state.
 2. The workflow must not solve the task by asking one subagent to read the entire corpus and answer directly.
-3. The workflow must create constructed slice handles for each `@@SLICE` block, preferably as separate files under `experiments/claude-workflows-full-rlm/generated-slices/`.
+3. The workflow must create constructed slice handles for each `@@SLICE` block, preferably as separate files under `claude-dynamic-workflows/proven-run/generated-slices/`.
 4. The workflow must call one subagent per constructed slice handle. Each slice subagent should read only its slice handle and return structured JSON with `id`, `active`, `rank`, `word`, and `weight`.
-5. The workflow must call a separate subagent or deterministic tool for the `@@VALIDATOR` block, returning the validator token.
+5. The workflow must call a separate subagent or deterministic tool for the `@@VALIDATOR` block, returning the synthetic validator value.
 6. The workflow JS must aggregate the structured slice results in workflow state: filter active records, sort by rank, join words with hyphens, and sum weights.
 7. The final answer must include:
    - the phrase

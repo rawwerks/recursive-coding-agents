@@ -35,6 +35,6 @@ pipeline → Fails G6.")
 
 ## `proven-run/`
 
-An actual executed RLM run (`wf_41a3e8cd-ab2`): the workflow script, the run record
-(7 agents + a validator token), the corpus, the model-generated slices, and the
-assessment. See [`proven-run/README.md`](proven-run/README.md).
+An actual executed RLM run: the workflow script, the redacted public run summary
+(7 agents + a synthetic validator fixture), the corpus, the model-generated
+slices, and the assessment. See [`proven-run/README.md`](proven-run/README.md).

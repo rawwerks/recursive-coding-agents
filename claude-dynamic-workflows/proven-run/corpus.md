@@ -22,7 +22,8 @@ weight_sum=<sum>
 validator=<validator token>
 ```
 
-The validator token is located in the `@@VALIDATOR` block.
+The validator value is a synthetic fixture, not a credential. It is located in
+the `@@VALIDATOR` block.
 
 ## Records
 
@@ -68,4 +69,5 @@ note: This record should be analyzed by a per-slice subagent.
 
 @@VALIDATOR
 validator: RLM-FULL-WORKFLOW-9c8a71
+note: synthetic fixture value, not a credential
 @@END

@@ -1,10 +1,18 @@
 ---
-label: Sub-agents to dynamic workflows
+label: What changed — dynamic workflows
+variant: split
 ---
 
-## "Claude Code has subagents — isn't that an RLM?"
+<div class="evidence-split">
+<div>
 
-- **Then** — No, not the default way people used it.
-- **Now** — with [dynamic workflows](https://code.claude.com/docs/en/scheduled-tasks) (about two weeks ago), it can meet the full criteria.
+## What flipped it: dynamic workflows.
+
+Claude writes an [orchestration script](https://code.claude.com/docs/en/scheduled-tasks) on the fly, then spins up a coordinated fleet of subagents in parallel — enough to meet the full RLM criteria.
 
 Runnable proof in the repo.
+
+</div>
+
+<a class="evidence-card" href="https://claude.com/blog/introducing-dynamic-workflows-in-claude-code" target="_blank" rel="noopener noreferrer"><img src="/dynamic-workflows-preview.png" alt="Claude Code blog post: Introducing dynamic workflows" /></a>
+</div>

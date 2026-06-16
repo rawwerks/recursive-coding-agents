@@ -2,16 +2,20 @@
 
 Use this rubric to decide whether a system is a full Recursive Language Model (RLM), an RLM-family ablation, or merely RLM-adjacent.
 
-For multi-agent or delegated evaluation, use `docs/rlm-judging-methodology.md` with this rubric. The methodology treats the rubric as a conformance contract and requires observed evidence, prompt-shape scoping, negative controls, and adversarial review.
+For multi-agent or delegated evaluation, use
+[`rlm-judging-methodology.md`](rlm-judging-methodology.md) with this rubric. The
+methodology treats the rubric as a conformance contract and requires observed
+evidence, prompt-shape scoping, negative controls, and adversarial review.
 
 ## Source Basis
 
-This rubric is derived from the local RLM corpus:
+This rubric is derived from the public RLM source trail and the repo-local
+judging methodology:
 
-- `sources/arxiv/2512.24601-recursive-language-models.md`: especially the abstract, Section 2, Algorithm 1 versus Algorithm 2, and Appendix C.
-- `sources/alexzhang/2025-rlm.md`: original blog framing of RLM as a drop-in model-call abstraction.
-- `sources/raw-works/rlms-are-the-new-reasoning-models.md`: local synthesis and implementation caution around cost, time, depth, and recursive behavior.
-- `docs/rlm-ecosystem-addendum.md`: adjacent ecosystem context and gotchas.
+- [Recursive Language Models paper](https://arxiv.org/abs/2512.24601): especially the abstract, Section 2, Algorithm 1 versus Algorithm 2, and Appendix C.
+- [Alex Zhang's original RLM blog post](https://alexzhang13.github.io/blog/2025/rlm/): framing of RLM as a drop-in model-call abstraction.
+- [RLMs are the new reasoning models](https://raw.works/rlms-are-the-new-reasoning-models/): synthesis and implementation cautions around cost, time, depth, and recursive behavior.
+- [`rlm-judging-methodology.md`](rlm-judging-methodology.md): repo-local conformance methodology.
 
 The key correction is terminological: the prompt/context is not itself "executable state." It is symbolic state bound inside an executable environment.
 
@@ -116,7 +120,7 @@ Without those, it is a coding agent with tools, not an RLM.
 
 A recursive coding agent is a special coding-agent case where the child call is another instance of the coding agent, not merely a bare LM completion. This can satisfy the RLM gates when a run externalizes context, manipulates handles, constructs slices, calls child agents from inside the executable environment, and aggregates symbolic intermediate state.
 
-It is also a distinct operational category. Recursive coding-agent systems add concerns that the minimal RLM definition does not require: workspace isolation, recursive edits, session trees, patch absorption, cleanup, and cost/depth/call guardrails. See `docs/recursive-coding-agents-vs-rlms-ypi.md` for the YPI example.
+It is also a distinct operational category. Recursive coding-agent systems add concerns that the minimal RLM definition does not require: workspace isolation, recursive edits, session trees, patch absorption, cleanup, and cost/depth/call guardrails. See [ypi: a recursive coding agent](https://raw.works/ypi-a-recursive-coding-agent/) and [`../web/src/slides/ypi.md`](../web/src/slides/ypi.md) for the YPI example.
 
 ## Practical Engineering Notes
 

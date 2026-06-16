@@ -7,13 +7,13 @@
 </script>
 
 <header class="site-nav">
-	<span class="brand">deck<span class="accent">.</span>starter</span>
+	<span class="brand">recursive<span class="accent">.</span>coding<span class="accent">.</span>agents</span>
 	<nav>
 		<Button class="nav-button" href="#slide-1" variant="ghost" size="sm">
 			<ArrowUpIcon data-icon="inline-start" aria-hidden="true" />
 			Top
 		</Button>
-		<Button class="nav-button" href="https://github.com" variant="outline" size="sm">
+		<Button class="nav-button" href="https://github.com/rawwerks/recursive-coding-agents" variant="outline" size="sm">
 			<ExternalLinkIcon data-icon="inline-start" aria-hidden="true" />
 			GitHub
 		</Button>

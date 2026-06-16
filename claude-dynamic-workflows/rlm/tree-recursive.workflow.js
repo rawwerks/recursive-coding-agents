@@ -12,8 +12,10 @@ export const meta = {
 // tree JSON here; every read is delegated to a subagent that sees ONLY its
 // one handle. The repo root is used solely to resolve relative handles to the
 // absolute paths the subagent Read tool requires.
-const REPO_ROOT = '/home/raw/github-rawwerks/aiewf-2026-rlm-recursive-coding-agent-talk'
-const ROOT = args
+const input = typeof args === 'string' ? { root: args } : (args || {})
+const cwd = (typeof process !== 'undefined' && process.cwd) ? process.cwd() : '.'
+const REPO_ROOT = input.repo || cwd
+const ROOT = input.root
 if (!ROOT || typeof ROOT !== 'string') {
   throw new Error('rlm-suite-tree-recursive requires the root handle as args (a path string)')
 }

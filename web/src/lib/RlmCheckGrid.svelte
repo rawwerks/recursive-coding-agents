@@ -4,11 +4,11 @@
 	import X from '@lucide/svelte/icons/x';
 
 	const COLS = [
-		{ crit: 'Executable environment', gate: 'G4' },
-		{ crit: 'Prompt externalized', gate: 'G2·G3' },
-		{ crit: 'Code calls the model', gate: 'G5' },
-		{ crit: 'Model picks decomposition', gate: 'G6' },
-		{ crit: 'State stays symbolic', gate: 'G7' }
+		{ crit: 'Executable environment'},
+		{ crit: 'Prompt externalized'},
+		{ crit: 'Code calls the model'},
+		{ crit: 'Model picks decomposition'},
+		{ crit: 'State stays symbolic'}
 	];
 
 	const ROWS = [
@@ -16,7 +16,7 @@
 		{ sys: 'Subagents', tag: 'verbal delegation', marks: [0, 0, 0, 1, 0], rlm: false },
 		{ sys: 'Coding agent + bash', tag: 'CodeAct-style, one session', marks: [1, 0, 0, 1, 0], rlm: false },
 		{ sys: 'Agentic loops', tag: "Ralph + the 2026 'loop engineering' wave", marks: [1, 0, 0, 0, 1], rlm: false },
-		{ sys: 'Hardcoded map-reduce', tag: 'developer-authored pipeline', marks: [1, 1, 1, 0, 1], rlm: false },
+		{ sys: 'Hardcoded map-reduce', tag: 'developer-authored pipeline — e.g. λ-RLM', marks: [1, 1, 1, 0, 1], rlm: false },
 		{ sys: 'Recursive Language Model', tag: 'passes every gate', marks: [1, 1, 1, 1, 1], rlm: true }
 	];
 </script>
@@ -29,10 +29,6 @@
 				{#each COLS as col}
 					<Table.Head class="px-2 text-center align-bottom">
 						<span class="block text-[0.78rem] font-semibold leading-tight text-foreground">{col.crit}</span>
-						<span
-							class="mt-1.5 inline-block rounded-full border border-border px-2 py-0.5 text-[0.62rem] font-bold tracking-wide text-muted-foreground"
-							>{col.gate}</span
-						>
 					</Table.Head>
 				{/each}
 			</Table.Row>

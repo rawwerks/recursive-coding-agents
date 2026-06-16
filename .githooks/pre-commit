@@ -1,0 +1,12 @@
+#!/usr/bin/env sh
+set -eu
+
+if ! command -v gitleaks >/dev/null 2>&1; then
+	printf '%s\n' 'gitleaks is required for commits in this repo: https://github.com/gitleaks/gitleaks'
+	exit 1
+fi
+
+repo_root=$(git rev-parse --show-toplevel)
+cd "$repo_root"
+
+gitleaks git --staged --redact --no-banner "$repo_root"

@@ -1,8 +1,8 @@
 {
   "title": "Recursive Language Model Rubric",
-  "generated_from": "agent synthesis over local RLM corpus",
+  "generated_from": "agent synthesis over public RLM sources and repo-local methodology",
   "definition": "A Recursive Language Model is an inference-time scaffold around a base LM that preserves the outer model-call interface while moving the user prompt or context into a persistent executable environment as symbolic state. The root LM is shown only metadata and handles for that state, then writes programs that inspect, transform, partition, and store intermediate results. From inside the same environment, those programs can invoke sub-LM or sub-RLM calls on programmatically constructed prompt slices or subproblems, including inside loops, and finally return either a direct answer or an environment variable as the model-call result.",
-  "judging_methodology": "docs/rlm-judging-methodology.md",
+  "judging_methodology": "rlm-judging-methodology.md",
   "methodological_guardrails": [
     "Classify behavior, not branding.",
     "Classify the specific run shape, not only the product.",

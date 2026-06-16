@@ -229,6 +229,164 @@
 	:global(.slide .content .prose .repo-preview-grid .repo-meta-item) {
 		font-size: clamp(0.74rem, 1.1vw, 0.84rem);
 	}
+	/* Other notable projects: a linked reading list of repos. Higher specificity than
+	   the generic .prose ul / li / a rules above so it overrides their grid + underline. */
+	:global(.slide .content .prose ul.project-list) {
+		display: block;
+		margin: clamp(0.7rem, 1.8vw, 1.2rem) 0 0;
+		padding: 0;
+		list-style: none;
+	}
+	:global(.slide .content .prose .project-list li) {
+		display: block;
+		margin: 0;
+		font-size: inherit;
+		line-height: inherit;
+		color: inherit;
+	}
+	:global(.slide .content .prose .project-list li + li) {
+		border-top: 1px solid color-mix(in oklch, var(--deck-text) 14%, transparent);
+	}
+	:global(.slide .content .prose .project-list .project) {
+		display: grid;
+		gap: 0.28rem;
+		padding: clamp(0.42rem, 1vw, 0.66rem) 0;
+		color: var(--deck-text);
+		text-decoration: none;
+		transition:
+			padding-left 0.18s cubic-bezier(0.2, 0.7, 0.2, 1),
+			color 0.16s ease;
+	}
+	:global(.slide .content .prose .project-list .project:hover),
+	:global(.slide .content .prose .project-list .project:focus-visible) {
+		padding-left: clamp(0.4rem, 1vw, 0.7rem);
+		outline: none;
+	}
+	:global(.slide .content .prose .project-list .project:focus-visible) {
+		outline: 2px solid var(--deck-accent);
+		outline-offset: 4px;
+		border-radius: 5px;
+	}
+	:global(.slide .content .prose .project-list .project-row) {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 0.4rem 1rem;
+	}
+	:global(.slide .content .prose .project-list .project-id) {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.6rem;
+		min-width: 0;
+	}
+	:global(.slide .content .prose .project-list .project-mark) {
+		display: grid;
+		place-items: center;
+		flex: 0 0 auto;
+		color: color-mix(in oklch, var(--deck-text) 78%, var(--deck-muted));
+	}
+	:global(.slide .content .prose .project-list .project-mark svg) {
+		display: block;
+	}
+	:global(.slide .content .prose .project-list .project-name) {
+		font-size: clamp(1rem, 1.7vw, 1.32rem);
+		font-weight: 720;
+		line-height: 1.1;
+		letter-spacing: 0;
+		color: var(--deck-text);
+	}
+	:global(.slide .content .prose .project-list .project-owner),
+	:global(.slide .content .prose .project-list .project-slash) {
+		color: var(--deck-muted);
+		font-weight: 600;
+	}
+	:global(.slide .content .prose .project-list .project-lang) {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.4rem;
+		flex: 0 0 auto;
+		color: var(--deck-muted);
+		font-size: clamp(0.8rem, 1.1vw, 0.94rem);
+		font-variant-numeric: tabular-nums;
+	}
+	:global(.slide .content .prose .project-list .lang-dot) {
+		width: 0.7rem;
+		height: 0.7rem;
+		border-radius: 999px;
+		background: var(--lang, var(--deck-accent));
+		box-shadow: 0 0 0 3px color-mix(in oklch, var(--lang, var(--deck-accent)) 16%, transparent);
+	}
+	:global(.slide .content .prose .project-list .project-desc) {
+		max-width: 96ch;
+		font-size: clamp(0.84rem, 1.1vw, 1rem);
+		line-height: 1.34;
+		color: var(--deck-muted);
+		text-wrap: pretty;
+	}
+	:global(.slide .content .prose .project-list .project-desc strong) {
+		color: var(--deck-text);
+		font-weight: 700;
+	}
+	/* "Is Claude Code an RLM": two-column Q4-No / Q2-Yes verdict comparison with tweet cards. */
+	:global(.slide .content .prose .verdict-compare) {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: clamp(1.4rem, 4vw, 3.2rem);
+		align-items: center;
+		margin-top: clamp(1.2rem, 3vw, 2rem);
+	}
+	:global(.slide .content .prose .verdict) {
+		display: grid;
+		gap: clamp(0.7rem, 1.6vw, 1.1rem);
+		justify-items: center;
+	}
+	:global(.slide .content .prose .verdict-call) {
+		margin: 0;
+		font-size: clamp(1.5rem, 1rem + 2vw, 2.6rem);
+		font-weight: 800;
+		line-height: 1;
+	}
+	:global(.slide .content .prose .verdict-call--no) {
+		color: var(--deck-muted);
+	}
+	:global(.slide .content .prose .verdict-call--yes) {
+		color: var(--deck-accent);
+	}
+	/* Date caption sits below the tweet screenshot. */
+	:global(.slide .content .prose .verdict-when) {
+		margin: 0;
+		font-size: clamp(0.78rem, 0.7rem + 0.3vw, 1rem);
+		font-weight: 600;
+		letter-spacing: 0.16em;
+		text-transform: uppercase;
+		color: var(--deck-muted);
+	}
+	:global(.slide .content .prose .verdict-tweet) {
+		display: block;
+		text-decoration: none;
+	}
+	:global(.slide .content .prose .verdict-tweet img) {
+		display: block;
+		height: min(62dvh, 600px);
+		width: auto;
+		max-width: 100%;
+		border-radius: 8px;
+		border: 1px solid color-mix(in oklch, var(--deck-text) 18%, transparent);
+		box-shadow: 0 28px 70px -38px color-mix(in oklch, var(--deck-text) 55%, transparent);
+		transition:
+			transform 0.16s ease,
+			border-color 0.16s ease;
+	}
+	:global(.slide .content .prose .verdict-tweet:hover img) {
+		transform: translateY(-2px);
+		border-color: color-mix(in oklch, var(--deck-accent) 45%, var(--deck-text));
+	}
+	:global(.slide .content .prose .verdict-tweet:focus-visible) {
+		outline: 2px solid var(--deck-accent);
+		outline-offset: 4px;
+		border-radius: 8px;
+	}
 	:global(.slide .content .prose .paper-preview) {
 		display: block;
 		overflow: hidden;
@@ -316,8 +474,15 @@
 		:global(.slide .content .prose .url-previews),
 		:global(.slide .content .prose .evidence-split),
 		:global(.slide .content .prose .repo-preview-grid),
+		:global(.slide .content .prose .verdict-compare),
 		:global(.slide .content .prose .paper-split) {
 			grid-template-columns: 1fr;
+		}
+		:global(.slide .content .prose .verdict-tweet img) {
+			height: auto;
+			width: 100%;
+			max-width: 26rem;
+			max-height: 52dvh;
 		}
 		:global(.slide .content .prose .evidence-card img) {
 			max-height: 38dvh;

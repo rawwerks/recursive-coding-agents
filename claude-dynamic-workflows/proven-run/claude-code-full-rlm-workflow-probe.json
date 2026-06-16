@@ -2,14 +2,13 @@
   "artifact_type": "claude_code_full_rlm_workflow_probe",
   "date": "2026-06-15",
   "claude_code_version": "2.1.177",
-  "driver": "interactive claudey in tmux after opening /workflows",
-  "workflow_run_id": "wf_41a3e8cd-ab2",
-  "task_id": "w92vm52fu",
   "classification": "Full RLM for this specific tagged-file/path-handle workflow run shape",
+  "privacy_note": "Workflow runtime IDs, local Claude-store paths, token counts, raw prompt previews, and per-agent transcript IDs are omitted from the public artifact.",
   "result": {
     "phrase": "handle-slice-subcall-aggregate",
     "weight_sum": 114,
     "validator": "RLM-FULL-WORKFLOW-9c8a71",
+    "validator_note": "Synthetic fixture value used to verify the probe, not a credential.",
     "active_ids_sorted_by_rank": [
       "B",
       "E",
@@ -21,30 +20,23 @@
     ]
   },
   "repo_artifacts": {
-    "corpus": "experiments/claude-workflows-full-rlm/corpus.md",
-    "prompt": "experiments/claude-workflows-full-rlm/prompt.txt",
-    "generated_slices": "experiments/claude-workflows-full-rlm/generated-slices/",
-    "slicer_helper": "experiments/claude-workflows-full-rlm/split_corpus.py",
-    "workflow_script": "experiments/claude-workflows-full-rlm/full-rlm-probe-workflow.js",
-    "workflow_run_record": "experiments/claude-workflows-full-rlm/full-rlm-probe-run.json"
-  },
-  "original_claude_artifacts": {
-    "script": "/home/raw/.claude/projects/-home-raw-github-rawwerks-aiewf-2026-rlm-recursive-coding-agent-talk/aa3faa40-7444-4688-8359-273045ccd758/workflows/scripts/full-rlm-probe-wf_41a3e8cd-ab2.js",
-    "run_record": "/home/raw/.claude/projects/-home-raw-github-rawwerks-aiewf-2026-rlm-recursive-coding-agent-talk/aa3faa40-7444-4688-8359-273045ccd758/workflows/wf_41a3e8cd-ab2.json",
-    "subagent_transcripts_dir": "/home/raw/.claude/projects/-home-raw-github-rawwerks-aiewf-2026-rlm-recursive-coding-agent-talk/aa3faa40-7444-4688-8359-273045ccd758/subagents/workflows/wf_41a3e8cd-ab2/"
+    "workflow_script": "claude-dynamic-workflows/proven-run/full-rlm-probe-workflow.js",
+    "corpus": "claude-dynamic-workflows/proven-run/corpus.md",
+    "prompt": "claude-dynamic-workflows/proven-run/prompt.txt",
+    "generated_slices": "claude-dynamic-workflows/proven-run/generated-slices/",
+    "assessment": "claude-dynamic-workflows/proven-run/claude-code-full-rlm-workflow-probe.md"
   },
   "observed_structure": {
     "agent_count": 7,
-    "total_tokens": 198809,
-    "total_tool_calls": 18,
+    "tool_call_count": 18,
     "subagent_labels": [
       "decompose:slicer",
-      "validator",
       "slice:A",
       "slice:B",
       "slice:C",
       "slice:D",
-      "slice:E"
+      "slice:E",
+      "validator"
     ]
   },
   "rubric_gate_assessment": {

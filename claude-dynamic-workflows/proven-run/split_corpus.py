@@ -4,9 +4,11 @@
 Does NOT parse or report any field values. Pure block extraction.
 """
 from pathlib import Path
+import sys
 
-CORPUS = Path("/home/raw/github-rawwerks/aiewf-2026-rlm-recursive-coding-agent-talk/experiments/claude-workflows-full-rlm/corpus.md")
-OUTDIR = Path("/home/raw/github-rawwerks/aiewf-2026-rlm-recursive-coding-agent-talk/experiments/claude-workflows-full-rlm/generated-slices")
+HERE = Path(__file__).resolve().parent
+CORPUS = Path(sys.argv[1]) if len(sys.argv) > 1 else HERE / "corpus.md"
+OUTDIR = Path(sys.argv[2]) if len(sys.argv) > 2 else HERE / "generated-slices"
 
 OUTDIR.mkdir(parents=True, exist_ok=True)
 

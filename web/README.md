@@ -1,8 +1,9 @@
-# SvelteKit Presentation Starter
+# Recursive Coding Agents Talk Site
 
-A **website that is also a presentation deck**. Full-screen slides you navigate by
-scroll, swipe, or arrow keys, but it remains a normal server-rendered,
-mobile-responsive website at a real URL.
+A **website that is also the presentation deck** for Raymond Weitekamp's
+Recursive Coding Agents talk at AI Engineer World's Fair 2026. Full-screen
+slides are navigable by scroll, swipe, or keyboard, while still rendering as a
+normal mobile-responsive website.
 
 - **Mobile-responsive**: slides reflow; they do not shrink a fixed canvas.
 - **Navigate**: vertical scroll / swipe, Arrow keys, PageUp/PageDown, Home/End, Space.
@@ -11,8 +12,8 @@ mobile-responsive website at a real URL.
 - **shadcn-ready**: Tailwind v4 + shadcn-svelte components live in `src/lib/components/ui`.
 - **Themeable**: load shadcn/tweakcn registry themes into one active local theme artifact.
 
-Built with SvelteKit 2, Svelte 5, Tailwind v4, and shadcn-svelte. The `zero-dep`
-branch preserves the minimal SvelteKit-only starter.
+Built with SvelteKit 2, Svelte 5, Tailwind v4, mdsvex, shadcn-svelte, and the
+Cloudflare adapter.
 
 ## Quick start
 
@@ -21,7 +22,8 @@ bun install
 bun run dev          # http://localhost:5173
 ```
 
-Then edit `src/routes/+page.svelte` and save — content is hot-reloaded.
+Then edit `src/slides/*.md` or `src/slides/order.ts` and save — content is
+hot-reloaded.
 
 ```bash
 bun run build        # production build
@@ -34,27 +36,21 @@ bun run theme:import  # import a shadcn/tweakcn registry theme
 
 ## Authoring slides
 
-Everything lives in **`src/routes/+page.svelte`**. A slide is a `<Slide>` block —
-add, remove, or reorder them and the ids + position dots update automatically.
+Slides live in **`src/slides/*.md`** as mdsvex files. Reorder the talk in
+**`src/slides/order.ts`**. `src/routes/+page.svelte` loads the ordered slide
+modules and owns the talk-specific global layout styles.
 
-```svelte
-<Deck label="My talk">
-  <Slide label="Intro">
-    <p class="eyebrow">Acme</p>
-    <h1 class="title">A big opening statement.</h1>
-    <p class="sub">A supporting line underneath.</p>
-  </Slide>
+```md
+---
+label: OpenProse
+variant: split
+alt: true
+eyebrow: For (almost) any coding agent
+---
 
-  <Slide label="Details" alt>
-    <h2 class="heading">Section heading</h2>
-    <!-- any HTML you want -->
-  </Slide>
+## A language compiled by the agent, not the computer.
 
-  <Slide label="Close" align="center" background="#0b1f1a">
-    <h2 class="title">Thanks.</h2>
-    <a class="cta" href="https://acme.com">acme.com</a>
-  </Slide>
-</Deck>
+Slide body content can use Markdown, HTML, and Svelte components.
 ```
 
 ### `<Slide>` props
@@ -120,6 +116,8 @@ Use `src/app.css` for slide-specific layout/type scale and
 
 ## How it works
 
+- **`src/routes/+page.svelte`** — loads mdsvex slide files according to
+  `src/slides/order.ts` and applies talk-specific global slide styles.
 - **`src/lib/Deck.svelte`** — the scroll-snap viewport. Handles keyboard nav, tracks
   the active slide with an `IntersectionObserver`, and renders the position dots
   (a client-side enhancement). Smooth-scroll and the entrance animation switch off
@@ -135,22 +133,17 @@ Use `src/app.css` for slide-specific layout/type scale and
 
 ## Deploy
 
-`adapter-auto` detects Vercel / Netlify / Cloudflare Pages automatically — just connect
-the repo and deploy.
-
-For a **plain static site** (GitHub Pages, S3, any CDN):
+This repo deploys with `@sveltejs/adapter-cloudflare` and Wrangler. Build output
+and the asset binding are configured in `wrangler.jsonc`.
 
 ```bash
-bun add -d @sveltejs/adapter-static
+bun run build
+bun run deploy:dry
+bun run deploy
 ```
 
-```js
-// svelte.config.js
-import adapter from '@sveltejs/adapter-static';
-// kit: { adapter: adapter() }
-```
-
-The deck is already `prerender = true`, so it exports to static HTML with no extra config.
+Cloudflare Git-connected builds should use this directory (`web/`) as the project
+root and `bun run build` as the build command.
 
 ## License
 

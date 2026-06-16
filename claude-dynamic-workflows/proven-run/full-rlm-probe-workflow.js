@@ -12,7 +12,8 @@ export const meta = {
 
 // ---- Symbolic context state: the corpus is a HANDLE (path), never inlined ----
 const CORPUS = args
-const SLICE_DIR = '/home/raw/github-rawwerks/aiewf-2026-rlm-recursive-coding-agent-talk/experiments/claude-workflows-full-rlm/generated-slices'
+const cwd = (typeof process !== 'undefined' && process.cwd) ? process.cwd() : '.'
+const SLICE_DIR = `${cwd}/claude-dynamic-workflows/proven-run/generated-slices`
 
 // ---- Structured contracts ----
 const INDEX_SCHEMA = {

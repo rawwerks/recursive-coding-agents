@@ -8,8 +8,10 @@ export const meta = {
 }
 
 // ---- config (script is the workflow definition, not "input"; only the corpus path is the input arg) ----
-const REPO = '/home/raw/github-rawwerks/aiewf-2026-rlm-recursive-coding-agent-talk'
-const corpusRel = typeof args === 'string' ? args : (args && args.corpus)
+const input = typeof args === 'string' ? { corpus: args } : (args || {})
+const cwd = (typeof process !== 'undefined' && process.cwd) ? process.cwd() : '.'
+const REPO = input.repo || cwd
+const corpusRel = input.corpus
 if (!corpusRel) throw new Error('No corpus handle provided as args')
 
 const lastSlash = corpusRel.lastIndexOf('/')
@@ -142,10 +144,10 @@ const weight_sum = Math.round(rawSum * 1e6) / 1e6
 const agentLabels = ['decomposer', ...sliceHandles.map((_, i) => `slice:${i}`), 'validator']
 const agent_count = agentLabels.length
 
-const phrase_match = (validator && typeof validator.expected_phrase === 'string')
-  ? (phrase === validator.expected_phrase) : null
-const weight_match = (validator && typeof validator.expected_weight_sum === 'number')
-  ? (Math.abs(weight_sum - validator.expected_weight_sum) < 1e-6) : null
+const expectedPhrase = validator ? validator.expected_phrase : null
+const expectedWeightSum = validator ? Number(validator.expected_weight_sum) : NaN
+const phrase_match = expectedPhrase ? !phrase.localeCompare(String(expectedPhrase)) : null
+const weight_match = Number.isFinite(expectedWeightSum) ? Math.abs(weight_sum - expectedWeightSum) < 1e-6 : null
 
 const result = {
   phrase,

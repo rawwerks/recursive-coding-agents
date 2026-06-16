@@ -1,20 +1,18 @@
 ---
 label: ypi (why-pi)
-eyebrow: My headline work
+eyebrow: My Experiments
 ---
 
 <script>
 	import GitHubRepoPreview from '$lib/GitHubRepoPreview.svelte';
 </script>
 
-# [ypi](https://github.com/rawwerks/ypi)
+# Finding [ypi](https://github.com/rawwerks/ypi)
 
-Built on [Pi](https://github.com/badlogic/pi-mono) (minimal, extensible). No extension made it recursive — so I forked it. Y is for the [Y-combinator](https://en.wikipedia.org/wiki/Fixed-point_combinator#Y_combinator).
+Built on [Pi](https://github.com/badlogic/pi-mono) (minimal, extensible). Previously pi extensions could not support recursion — so I forked it. Y is for the [Y-combinator](https://en.wikipedia.org/wiki/Fixed-point_combinator#Y_combinator).
 
-- **Wrapper** — a fully recursive Pi agent.
-- **Extension** — make any existing Pi config recursive.
-
-New release — in honor of this talk.
+- **Wrapper CLI** — `ypi` - a fully recursive Pi agent.
+- **Pi Extension** — `pi-recursive` - make any existing Pi config recursive.
 
 <div class="repo-preview-grid">
 	<GitHubRepoPreview

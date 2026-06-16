@@ -1,0 +1,9 @@
+# Repo-root ignores. The app under web/ has its own web/.gitignore.
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+*.log
+
+# Stray dependency installs at the root (the app's live in web/node_modules)
+/node_modules

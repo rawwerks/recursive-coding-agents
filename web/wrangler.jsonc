@@ -1,0 +1,17 @@
+{
+	// Cloudflare Workers config for the SvelteKit deck/site.
+	// Build:  bun run build   (emits .svelte-kit/cloudflare/)
+	// Dev:    wrangler dev     Deploy: wrangler deploy
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "recursive-coding-agents",
+	"compatibility_date": "2025-09-01",
+	"compatibility_flags": ["nodejs_compat"],
+	"main": ".svelte-kit/cloudflare/_worker.js",
+	"assets": {
+		"binding": "ASSETS",
+		"directory": ".svelte-kit/cloudflare"
+	},
+	"observability": {
+		"enabled": true
+	}
+}

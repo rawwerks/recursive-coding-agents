@@ -1,4 +1,4 @@
-import adapter from '@sveltejs/adapter-auto';
+import adapter from '@sveltejs/adapter-cloudflare';
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 import { mdsvex } from 'mdsvex';
 
@@ -13,9 +13,11 @@ const config = {
 	extensions: ['.svelte', '.md'],
 	preprocess: [vitePreprocess(), mdsvex(mdsvexOptions)],
 	kit: {
-		// adapter-auto picks Vercel / Netlify / Cloudflare automatically.
-		// For a plain static site (GitHub Pages, S3, any CDN) swap this for
-		// @sveltejs/adapter-static — see the README "Deploy" section.
+		// Cloudflare Workers (static assets + a thin SSR worker). Build with
+		// `bun run build`, deploy with `wrangler deploy`. The output dir and
+		// asset binding are read from wrangler.jsonc at build time. The deck is
+		// fully prerendered (see src/routes/+layout.ts), so the worker only
+		// handles fallbacks / 404s.
 		adapter: adapter()
 	}
 };

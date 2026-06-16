@@ -180,23 +180,37 @@
 	}
 	:global(.slide .content .prose .bridge-quotes) {
 		display: grid;
-		gap: clamp(1.1rem, 2.6vw, 1.7rem);
-		margin-top: clamp(1.6rem, 3.8vw, 2.5rem);
-		text-align: left;
+		gap: 2.2rem;
+		width: 100%;
+		margin: 0 auto;
+		text-align: center;
 	}
 	:global(.slide .content .prose .bridge-quotes blockquote) {
 		margin: 0;
-		padding: clamp(1rem, 2.3vw, 1.4rem) 0 0;
-		border-top: clamp(3px, 0.35vw, 5px) solid
-			color-mix(in oklch, var(--deck-accent) 62%, var(--deck-text));
-		font-size: clamp(1.35rem, 2.7vw, 2.4rem);
-		font-weight: 650;
-		line-height: 1.16;
+		padding: 0;
+		border: 0;
 		color: var(--deck-text);
 	}
-	:global(.slide .content .prose .bridge-quotes strong) {
-		color: var(--deck-accent);
-		font-weight: 800;
+	:global(.slide .content .prose .bridge-quotes blockquote p) {
+		margin: 0;
+		font-size: 3.45rem;
+		font-weight: 720;
+		line-height: 1.08;
+		letter-spacing: 0;
+		color: inherit;
+		text-wrap: balance;
+	}
+	:global(.slide .content .prose .bridge-quotes .bridge-rule) {
+		justify-self: center;
+		width: 100%;
+		height: 1px;
+		background: linear-gradient(
+			to right,
+			transparent,
+			color-mix(in oklch, var(--deck-text) 22%, transparent) 18%,
+			color-mix(in oklch, var(--deck-text) 22%, transparent) 82%,
+			transparent
+		);
 	}
 	:global(.slide .content .prose .repo-preview-grid) {
 		display: grid;
@@ -291,6 +305,14 @@
 		text-decoration-color: var(--deck-accent);
 	}
 	@media (max-width: 760px) {
+		:global(.slide .content .prose .bridge-quotes) {
+			width: 100%;
+			gap: 1.35rem;
+		}
+		:global(.slide .content .prose .bridge-quotes blockquote p) {
+			font-size: 2.15rem;
+			line-height: 1.16;
+		}
 		:global(.slide .content .prose .url-previews),
 		:global(.slide .content .prose .evidence-split),
 		:global(.slide .content .prose .repo-preview-grid),

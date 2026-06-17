@@ -30,3 +30,4 @@ page.
 - [`../claude-dynamic-workflows/README.md`](../claude-dynamic-workflows/README.md)
   — Claude Code workflow examples.
 - [`../openprose/README.md`](../openprose/README.md) — OpenProse examples.
+- [`../DEVELOPING.md`](../DEVELOPING.md) — local setup, checks, and deploy notes.

@@ -27,6 +27,7 @@ looks like one, and how to judge the difference.
 | Judge a system with evidence | [`rlm-rubric/rlm-judging-methodology.md`](rlm-rubric/rlm-judging-methodology.md) |
 | Compare Claude Code workflow examples | [`claude-dynamic-workflows/`](claude-dynamic-workflows/) |
 | Compare OpenProse examples | [`openprose/`](openprose/) |
+| Develop or contribute | [`DEVELOPING.md`](DEVELOPING.md) |
 
 ## What is in the repo
 

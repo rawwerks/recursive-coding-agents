@@ -27,7 +27,7 @@ bun run test:design
 bun run test:theme
 bun run build
 cd ..
-gitleaks detect --source . --redact --no-banner
+gitleaks dir . --redact --no-banner
 git diff --check
 ```
 

@@ -12,6 +12,7 @@ provenance cannot be verified.
 | --- | --- | --- |
 | `dynamic-workflows-preview-compact.png` | Claude Code dynamic workflows blog preview, https://claude.com/blog/introducing-dynamic-workflows-in-claude-code | `src/slides/workflows.md` |
 | `dynamic-workflows-preview.png` | Claude Code dynamic workflows blog preview, https://claude.com/blog/introducing-dynamic-workflows-in-claude-code | Static reference asset |
+| `favicon.svg` | Custom presentation favicon for this talk | `src/app.html` |
 | `mgh-preview.png` | The Mismanaged Geniuses Hypothesis article preview, https://alexzhang13.github.io/blog/2026/mgh/ | `src/slides/mismanaged.md` |
 | `rlm-agent-map.png` | Recursive coding-agent/RLM diagram asset for this talk | Static reference asset |
 | `rlm-arxiv-preview.png` | Recursive Language Models arXiv paper preview, https://arxiv.org/abs/2512.24601 | `src/slides/what-is-rlm.md` |

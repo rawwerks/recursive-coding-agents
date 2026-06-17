@@ -28,7 +28,7 @@ bun run build        # production build
 Before publishing or committing public-facing changes, also run:
 
 ```bash
-gitleaks detect --source . --redact --no-banner
+gitleaks dir . --redact --no-banner
 git diff --check
 ```
 

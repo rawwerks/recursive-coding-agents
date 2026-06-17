@@ -42,12 +42,20 @@ The example folders are intentionally verdict-shaped. In `claude-dynamic-workflo
 and `openprose/`, files under `rlm/` are positive examples; files under
 `not-rlm/` are nearby negative controls.
 
+Read the verdicts by run shape, not by product label. A coding agent with
+subagents, loops, bash, durable files, or a repo handle can deserve credit for
+the gates it really satisfies. It still is not a full RLM unless the run also
+externalizes the task context behind handles, lets the model choose a
+decomposition, makes programmatic model/subagent calls over constructed slices or
+subproblems, and aggregates symbolic intermediate state into the final answer.
+
 ## One-line RLM definition
 
-An RLM moves prompt/context into a persistent executable environment as symbolic
-state, shows the root model only handles and metadata, lets the model write code
-that inspects and slices that state, recursively calls models or agents over the
-slices, and returns the final answer through the outer model-call interface.
+An RLM moves the task context into a persistent executable environment as
+symbolic state, lets the root model work through handles and metadata, lets the
+model write code that inspects and slices that state, recursively calls models or
+agents over the slices, and returns the final answer through the outer
+model-call interface.
 
 ## License
 

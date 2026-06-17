@@ -76,6 +76,7 @@
 			<span aria-hidden="true"></span>
 		</a>
 	{/if}
+	<div class="source-footer" aria-hidden="true">recursivecodingagents.com</div>
 </section>
 
 <style>
@@ -170,6 +171,22 @@
 		transform: translateX(-50%) translateY(0) scale(1);
 	}
 
+	.source-footer {
+		position: absolute;
+		left: 50vw;
+		bottom: max(0.38rem, env(safe-area-inset-bottom));
+		z-index: 1;
+		transform: translateX(-50%);
+		color: color-mix(in oklch, var(--deck-text) 56%, transparent);
+		font-size: clamp(0.68rem, 0.56rem + 0.24vw, 0.84rem);
+		font-weight: 560;
+		line-height: 1;
+		letter-spacing: 0;
+		pointer-events: none;
+		user-select: none;
+		white-space: nowrap;
+	}
+
 	@keyframes cue-pop {
 		to {
 			opacity: 0.92;
@@ -203,6 +220,10 @@
 			bottom: max(0.8rem, env(safe-area-inset-bottom));
 			width: 2.35rem;
 			height: 2.35rem;
+		}
+		.source-footer {
+			bottom: max(0.32rem, env(safe-area-inset-bottom));
+			font-size: 0.6rem;
 		}
 	}
 </style>

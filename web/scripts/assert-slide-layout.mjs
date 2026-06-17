@@ -607,6 +607,15 @@ function assertNoImageTextOverlap(caseName, result) {
 	}
 }
 
+function assertSourceFooters(caseName, result) {
+	if (!result.sourceFooterIssues) fail(`${caseName}: source footer audit did not run.`);
+	if (result.sourceFooterIssues.length > 0) {
+		fail(
+			`${caseName}: source footer placement failed.\n${JSON.stringify(result.sourceFooterIssues, null, 2)}`
+		);
+	}
+}
+
 await assertStaticLayoutContract();
 
 let vite;
@@ -668,6 +677,7 @@ try {
 			'pre'
 		].join(',');
 		const imageTextOverlaps = [];
+		const sourceFooterIssues = [];
 		for (const slide of slides) {
 			const images = Array.from(slide.querySelectorAll('.content img'))
 				.map((element) => ({ element, rect: visibleRect(element) }))
@@ -712,6 +722,67 @@ try {
 					}
 				}
 			}
+
+			const footer = slide.querySelector(':scope > .source-footer');
+			const slideRect = slide.getBoundingClientRect();
+			if (!footer) {
+				sourceFooterIssues.push({
+					slide: slide.id,
+					label: slide.getAttribute('data-label') ?? '',
+					reason: 'missing source footer'
+				});
+			} else {
+				const footerRect = visibleRect(footer);
+				if (!footerRect) {
+					sourceFooterIssues.push({
+						slide: slide.id,
+						label: slide.getAttribute('data-label') ?? '',
+						reason: 'source footer is not visible'
+					});
+				} else {
+					const centerDrift = Math.abs(footerRect.left + footerRect.width / 2 - window.innerWidth / 2);
+					const bottomGap = slideRect.bottom - footerRect.bottom;
+					if (centerDrift > 2 || bottomGap < 3 || bottomGap > 28) {
+						sourceFooterIssues.push({
+							slide: slide.id,
+							label: slide.getAttribute('data-label') ?? '',
+							reason: 'source footer is not centered in the bottom zone',
+							centerDrift: Number(centerDrift.toFixed(2)),
+							bottomGap: Number(bottomGap.toFixed(2))
+						});
+					}
+
+					const contentElements = Array.from(
+						slide.querySelectorAll(\`.content \${textSelector}, .content img\`)
+					)
+						.filter((element) => {
+							if (element.querySelector?.('img')) return false;
+							if (element.matches('img')) return true;
+							return Boolean(element.textContent?.trim());
+						})
+						.map((element) => ({ element, rect: visibleRect(element) }))
+						.filter((item) => item.rect);
+
+					for (const item of contentElements) {
+						const xOverlap =
+							Math.min(footerRect.right, item.rect.right) - Math.max(footerRect.left, item.rect.left);
+						const yOverlap =
+							Math.min(footerRect.bottom, item.rect.bottom) - Math.max(footerRect.top, item.rect.top);
+						if (xOverlap > 1 && yOverlap > 1) {
+							sourceFooterIssues.push({
+								slide: slide.id,
+								label: slide.getAttribute('data-label') ?? '',
+								reason: 'source footer overlaps slide content',
+								text: item.element.matches('img')
+									? item.element.getAttribute('src')
+									: item.element.textContent.trim().replace(/\\s+/g, ' ').slice(0, 90),
+								xOverlap: Number(xOverlap.toFixed(2)),
+								yOverlap: Number(yOverlap.toFixed(2))
+							});
+						}
+					}
+				}
+			}
 		}
 		const outcomesSlide = slides.find(
 			(slide) => slide.getAttribute('data-label') === 'We all want outcomes'
@@ -730,6 +801,7 @@ try {
 
 		return {
 			imageTextOverlaps,
+			sourceFooterIssues,
 			outcomesProgression:
 				progressionRect && progressionFigureRect && outcomesSlideRect && textBottom !== null
 					? {
@@ -809,6 +881,7 @@ try {
 		const result = await evaluateInPage(chromium.page, viewport, layoutExpression);
 		assertUnifiedWidths(viewport.name, result);
 		assertNoImageTextOverlap(viewport.name, result);
+		assertSourceFooters(viewport.name, result);
 		assertOutcomesProgression(viewport.name, result);
 		console.log(
 			`${viewport.name} slide layout assertions passed (${result.items.length} slides, width ${result.items[0].width}px).`

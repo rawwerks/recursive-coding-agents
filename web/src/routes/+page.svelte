@@ -330,6 +330,22 @@
 		box-shadow: none;
 		background: transparent;
 	}
+	:global(.slide[data-label='Too Hot To Benchmark'] .content .prose .benchmark-tweets) {
+		margin-top: clamp(0.75rem, 2dvh, 1.15rem);
+	}
+	:global(.slide[data-label='Too Hot To Benchmark'] .content .prose .benchmark-tweets__image) {
+		width: min(38vw, 480px);
+		height: min(60dvh, 560px);
+	}
+	:global(.slide[data-label='Too Hot To Benchmark'] .content .prose > p:last-child) {
+		max-width: 54rem;
+		margin: clamp(0.75rem, 2dvh, 1.1rem) auto 0;
+		font-size: clamp(1rem, 0.84rem + 0.54vw, 1.34rem);
+		font-weight: 780;
+		line-height: 1.14;
+		text-align: center;
+		text-wrap: balance;
+	}
 	:global(.slide .content .prose .slide-footer-claim) {
 		max-width: 100%;
 		margin: clamp(1.2rem, 3vw, 2rem) auto 0;

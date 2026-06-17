@@ -11,6 +11,7 @@ provenance cannot be verified.
 | File | Source / subject | Used from |
 | --- | --- | --- |
 | `ai-engineer-progression-transparent.png` | Custom AI engineer progression illustration for this talk | `src/slides/outcomes.md` |
+| `claude-code-harness-for-every-task-dynamic-workflows.png` | Claude Code dynamic workflows image, https://cdn.prod.website-files.com/68a44d4040f98a4adf2207b6/6a1f16d86247e586b929a407_image10.png. Source page: https://claude.com/blog/a-harness-for-every-task-dynamic-workflows-in-claude-code | `src/slides/workflows.md` |
 | `dynamic-workflows-preview-compact.png` | Claude Code dynamic workflows blog preview, https://claude.com/blog/introducing-dynamic-workflows-in-claude-code | `src/slides/workflows.md` |
 | `dynamic-workflows-preview.png` | Claude Code dynamic workflows blog preview, https://claude.com/blog/introducing-dynamic-workflows-in-claude-code | Static reference asset |
 | `favicon.svg` | Custom presentation favicon for this talk | `src/app.html` |

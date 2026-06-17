@@ -294,6 +294,16 @@
 		display: none;
 	}
 
+	@media (min-width: 761px) and (max-height: 800px) {
+		.benchmark-tweets {
+			margin-top: 1rem;
+		}
+
+		.benchmark-tweets__image {
+			height: min(67dvh, 520px);
+		}
+	}
+
 	@media (width <= 760px) {
 		.benchmark-tweets {
 			margin-top: 0.72rem;

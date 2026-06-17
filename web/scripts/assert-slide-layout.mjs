@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { mkdir, mkdtemp, readFile, rm } from 'node:fs/promises';
+import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { homedir } from 'node:os';
 import path from 'node:path';
 import { spawn } from 'node:child_process';
@@ -9,6 +9,13 @@ import process from 'node:process';
 const host = '127.0.0.1';
 const chromiumBin = process.env.CHROMIUM_BIN ?? 'chromium';
 const scratchRoot = path.join(homedir(), 'scratch', 'recursive-coding-agents-talk', 'visual-qa');
+const visualQaArtifactsEnabled = process.env.VISUAL_QA_ARTIFACTS === '1';
+const visualQaRunId =
+	process.env.VISUAL_QA_RUN_ID ??
+	new Date().toISOString().replaceAll(':', '-').replace(/\.\d+Z$/, 'Z');
+const visualQaArtifactRoot = process.env.VISUAL_QA_ARTIFACT_DIR
+	? path.resolve(process.env.VISUAL_QA_ARTIFACT_DIR)
+	: path.join(scratchRoot, 'artifacts', visualQaRunId);
 
 function fail(message) {
 	throw new Error(`Slide layout assertion failed: ${message}`);
@@ -16,6 +23,19 @@ function fail(message) {
 
 function delay(ms) {
 	return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function safeSlug(value) {
+	return String(value)
+		.toLowerCase()
+		.replace(/[^a-z0-9]+/g, '-')
+		.replace(/^-+|-+$/g, '')
+		.slice(0, 80);
+}
+
+async function writeJson(file, value) {
+	await mkdir(path.dirname(file), { recursive: true });
+	await writeFile(file, `${JSON.stringify(value, null, 2)}\n`);
 }
 
 function fetchWithTimeout(url, timeoutMs = 5_000) {
@@ -283,6 +303,171 @@ async function evaluateInPage(page, viewport, expression) {
 		ws.onmessage = null;
 		ws.close();
 	}
+}
+
+async function withPageSession(page, callback) {
+	const ws = new WebSocket(page.webSocketDebuggerUrl);
+	let nextId = 1;
+	const pending = new Map();
+
+	const onMessage = (event) => {
+		let message;
+		try {
+			message = JSON.parse(event.data);
+		} catch (error) {
+			for (const { reject } of pending.values()) {
+				reject(error instanceof Error ? error : new Error(String(error)));
+			}
+			pending.clear();
+			return;
+		}
+
+		if (!message.id || !pending.has(message.id)) return;
+		const { resolve, reject } = pending.get(message.id);
+		pending.delete(message.id);
+		message.error ? reject(new Error(message.error.message)) : resolve(message.result);
+	};
+
+	ws.onmessage = onMessage;
+
+	try {
+		await new Promise((resolve, reject) => {
+			const cleanup = () => {
+				ws.onopen = null;
+				ws.onerror = null;
+			};
+			ws.onopen = () => {
+				cleanup();
+				resolve();
+			};
+			ws.onerror = () => {
+				cleanup();
+				reject(new Error('Could not connect to Chromium page websocket.'));
+			};
+		});
+
+		function send(method, params = {}) {
+			const id = nextId++;
+			ws.send(JSON.stringify({ id, method, params }));
+			return new Promise((resolve, reject) => pending.set(id, { resolve, reject }));
+		}
+
+		return await callback(send);
+	} finally {
+		ws.onmessage = null;
+		ws.close();
+	}
+}
+
+async function captureSlideScreenshot(page, viewport, label, file) {
+	await withPageSession(page, async (send) => {
+		await send('Runtime.enable');
+		await send('Page.enable');
+		await send('Emulation.setDeviceMetricsOverride', {
+			width: viewport.width,
+			height: viewport.height,
+			deviceScaleFactor: 1,
+			mobile: viewport.width < 760
+		});
+		await send('Runtime.evaluate', {
+			expression: `new Promise((resolve) => {
+				const deadline = performance.now() + 8000;
+				const tick = () => {
+					if (document.readyState !== 'loading' && document.querySelector('.slide')) {
+						resolve(true);
+						return;
+					}
+					if (performance.now() > deadline) {
+						resolve(false);
+						return;
+					}
+					requestAnimationFrame(tick);
+				};
+				tick();
+			})`,
+			awaitPromise: true,
+			returnByValue: true
+		});
+		await send('Runtime.evaluate', {
+			expression: `new Promise((resolve) => {
+				const targetLabel = ${JSON.stringify(label)};
+				const deck = document.querySelector('.deck');
+				const slide = Array.from(document.querySelectorAll('.slide')).find(
+					(candidate) => candidate.getAttribute('data-label') === targetLabel
+				);
+				if (!deck || !slide) {
+					resolve(false);
+					return;
+				}
+				deck.style.scrollBehavior = 'auto';
+				deck.scrollTop = slide.offsetTop;
+				requestAnimationFrame(() => requestAnimationFrame(() => resolve(true)));
+			})`,
+			awaitPromise: true,
+			returnByValue: true
+		});
+		await delay(250);
+		const screenshot = await send('Page.captureScreenshot', {
+			format: 'png',
+			captureBeyondViewport: false
+		});
+		await mkdir(path.dirname(file), { recursive: true });
+		await writeFile(file, Buffer.from(screenshot.data, 'base64'));
+	});
+}
+
+async function persistViewportFailureArtifact(page, viewport, phase, result, error, slideLabels = []) {
+	if (!visualQaArtifactsEnabled) return;
+
+	const phaseSlug = safeSlug(`${viewport.name}-${phase}`);
+	const dir = path.join(visualQaArtifactRoot, phaseSlug);
+	const message = error instanceof Error ? error.message : String(error);
+	const labels = new Set();
+
+	for (const label of slideLabels) {
+		if (label) labels.add(label);
+	}
+	for (const item of result?.items ?? []) {
+		if (item.horizontalOverflow || item.verticalOverflow) labels.add(item.label);
+	}
+	for (const issue of result?.sourceFooterIssues ?? []) {
+		if (issue.label) labels.add(issue.label);
+	}
+	for (const issue of result?.imageTextOverlaps ?? []) {
+		if (issue.label) labels.add(issue.label);
+	}
+	for (const label of result?.slideLabels ?? []) {
+		if (label) labels.add(label);
+	}
+	for (const item of result?.failures ?? []) {
+		if (item.slideLabel) labels.add(item.slideLabel);
+	}
+	if (result?.outcomesProgression) labels.add('We all want outcomes');
+	if (result?.dotRail && labels.size === 0) labels.add(result?.items?.[0]?.label ?? 'Title');
+
+	const screenshots = [];
+	for (const label of [...labels].filter(Boolean).slice(0, 8)) {
+		const file = path.join(dir, `${safeSlug(label)}.png`);
+		try {
+			await captureSlideScreenshot(page, viewport, label, file);
+			screenshots.push({ label, file });
+		} catch (captureError) {
+			screenshots.push({
+				label,
+				error: captureError instanceof Error ? captureError.message : String(captureError)
+			});
+		}
+	}
+
+	await writeJson(path.join(dir, 'manifest.json'), {
+		generatedAt: new Date().toISOString(),
+		phase,
+		viewport,
+		error: message,
+		screenshots,
+		result
+	});
+	console.error(`[visual-qa] wrote failure artifacts: ${dir}`);
 }
 
 async function probeBenchmarkCarouselTouchSwipe(page) {
@@ -879,10 +1064,15 @@ try {
 		{ name: 'narrow-mobile', width: 360, height: 740 }
 	]) {
 		const result = await evaluateInPage(chromium.page, viewport, layoutExpression);
-		assertUnifiedWidths(viewport.name, result);
-		assertNoImageTextOverlap(viewport.name, result);
-		assertSourceFooters(viewport.name, result);
-		assertOutcomesProgression(viewport.name, result);
+		try {
+			assertUnifiedWidths(viewport.name, result);
+			assertNoImageTextOverlap(viewport.name, result);
+			assertSourceFooters(viewport.name, result);
+			assertOutcomesProgression(viewport.name, result);
+		} catch (error) {
+			await persistViewportFailureArtifact(chromium.page, viewport, 'layout', result, error);
+			throw error;
+		}
 		console.log(
 			`${viewport.name} slide layout assertions passed (${result.items.length} slides, width ${result.items[0].width}px).`
 		);
@@ -951,7 +1141,19 @@ try {
 			viewport,
 			takeawaysPretextExpression
 		);
-		assertTakeawaysPretext(viewport.name, takeawaysPretextResult);
+		try {
+			assertTakeawaysPretext(viewport.name, takeawaysPretextResult);
+		} catch (error) {
+			await persistViewportFailureArtifact(
+				chromium.page,
+				viewport,
+				'takeaways-pretext',
+				{ takeawaysPretext: takeawaysPretextResult },
+				error,
+				['Takeaways']
+			);
+			throw error;
+		}
 		console.log(`${viewport.name} takeaways Pretext assertions passed.`);
 
 		const alignmentAuditExpression = `((async () => {
@@ -1399,10 +1601,38 @@ try {
 				}
 			}
 
-			return { checked, failures };
+			let slideLabels = Array.from(
+				new Set(
+					failures
+						.map((failure) =>
+							failure.slide
+								? document.getElementById(failure.slide)?.getAttribute('data-label')
+								: failure.element?.closest?.('.slide')?.getAttribute('data-label')
+						)
+						.filter(Boolean)
+				)
+			);
+			if (failures.length > 0 && slideLabels.length === 0) {
+				slideLabels = Array.from(document.querySelectorAll('.slide'))
+					.map((slide) => slide.getAttribute('data-label'))
+					.filter(Boolean);
+			}
+
+			return { checked, failures, slideLabels };
 		})())`;
 		const alignmentAuditResult = await evaluateInPage(chromium.page, viewport, alignmentAuditExpression);
-		assertAlignmentAudit(viewport.name, alignmentAuditResult);
+		try {
+			assertAlignmentAudit(viewport.name, alignmentAuditResult);
+		} catch (error) {
+			await persistViewportFailureArtifact(
+				chromium.page,
+				viewport,
+				'alignment-audit',
+				alignmentAuditResult,
+				error
+			);
+			throw error;
+		}
 		console.log(
 			`${viewport.name} mathematical alignment audit passed (${alignmentAuditResult.checked.length} rule groups).`
 		);
@@ -1517,6 +1747,7 @@ try {
 					const lineDrift = Math.abs(layout.lineCount - renderedLines);
 					const item = {
 						label: group.label,
+						slideLabel: element.closest('.slide')?.getAttribute('data-label') ?? null,
 						selector: group.selector,
 						text,
 						width: Number(width.toFixed(2)),
@@ -1542,7 +1773,18 @@ try {
 			viewport,
 			pretextTextAuditExpression
 		);
-		assertPretextTextAudit(viewport.name, pretextTextAuditResult);
+		try {
+			assertPretextTextAudit(viewport.name, pretextTextAuditResult);
+		} catch (error) {
+			await persistViewportFailureArtifact(
+				chromium.page,
+				viewport,
+				'pretext-text-audit',
+				pretextTextAuditResult,
+				error
+			);
+			throw error;
+		}
 		console.log(
 			`${viewport.name} Pretext text audit passed (${pretextTextAuditResult.measured.length} measured, ${pretextTextAuditResult.skipped.length} skipped).`
 		);
@@ -1640,7 +1882,18 @@ try {
 		{ name: 'desktop keyboard', width: 1440, height: 900 },
 		keyboardExpression
 	);
-	if (keyboardResult.error) fail(`${keyboardResult.error}\n${JSON.stringify(keyboardResult.results, null, 2)}`);
+	if (keyboardResult.error) {
+		const error = new Error(`${keyboardResult.error}\n${JSON.stringify(keyboardResult.results, null, 2)}`);
+		await persistViewportFailureArtifact(
+			chromium.page,
+			{ name: 'desktop keyboard', width: 1440, height: 900 },
+			'keyboard',
+			keyboardResult,
+			error,
+			['Title']
+		);
+		fail(error.message);
+	}
 	console.log('keyboard slide shortcuts passed (1-4 and 0 -> slide 10).');
 
 	const scrollCueExpression = `((async () => {
@@ -1844,7 +2097,18 @@ try {
 		{ name: 'desktop title cue', width: 1440, height: 900 },
 		scrollCueExpression
 	);
-	if (scrollCueResult.error) fail(`${scrollCueResult.error}\n${JSON.stringify(scrollCueResult, null, 2)}`);
+	if (scrollCueResult.error) {
+		const error = new Error(`${scrollCueResult.error}\n${JSON.stringify(scrollCueResult, null, 2)}`);
+		await persistViewportFailureArtifact(
+			chromium.page,
+			{ name: 'desktop title cue', width: 1440, height: 900 },
+			'global-next-slide-cue',
+			scrollCueResult,
+			error,
+			['Title']
+		);
+		fail(error.message);
+	}
 	console.log('global next slide cue passed (idle reveal, click advance, final-slide hide).');
 
 	const benchmarkCarouselExpression = `((async () => {
@@ -1936,13 +2200,33 @@ try {
 		benchmarkCarouselExpression
 	);
 	if (benchmarkCarouselResult.error) {
-		fail(`${benchmarkCarouselResult.error}\n${JSON.stringify(benchmarkCarouselResult, null, 2)}`);
+		const error = new Error(
+			`${benchmarkCarouselResult.error}\n${JSON.stringify(benchmarkCarouselResult, null, 2)}`
+		);
+		await persistViewportFailureArtifact(
+			chromium.page,
+			{ name: 'mobile benchmark carousel', width: 390, height: 844 },
+			'benchmark-carousel',
+			benchmarkCarouselResult,
+			error,
+			['Too Hot To Benchmark']
+		);
+		fail(error.message);
 	}
 	console.log('mobile benchmark carousel passed (dots visible, auto-rotates).');
 
 	const benchmarkSwipeResult = await probeBenchmarkCarouselTouchSwipe(chromium.page);
 	if (benchmarkSwipeResult.error) {
-		fail(`${benchmarkSwipeResult.error}\n${JSON.stringify(benchmarkSwipeResult, null, 2)}`);
+		const error = new Error(`${benchmarkSwipeResult.error}\n${JSON.stringify(benchmarkSwipeResult, null, 2)}`);
+		await persistViewportFailureArtifact(
+			chromium.page,
+			{ name: 'mobile benchmark swipe', width: 390, height: 844 },
+			'benchmark-carousel-swipe',
+			benchmarkSwipeResult,
+			error,
+			['Too Hot To Benchmark']
+		);
+		fail(error.message);
 	}
 	console.log('mobile benchmark carousel swipe passed (touch drag advances posts).');
 } finally {

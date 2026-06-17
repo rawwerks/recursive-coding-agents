@@ -8,13 +8,13 @@ alt: true
 
 ## Dynamic workflows made Claude Code recursive.
 
-Claude can write an [orchestration script](https://claude.com/blog/introducing-dynamic-workflows-in-claude-code), then run a fleet of subagents. The line is whether the **model chooses the decomposition**, or the script fixes it ahead of time.
+Claude can write an [orchestration script](https://claude.com/blog/a-harness-for-every-task-dynamic-workflows-in-claude-code), then run a fleet of subagents. The line is whether the **model chooses the decomposition**, or the script fixes it ahead of time.
 
 </div>
 
-<a class="workflow-article" href="https://claude.com/blog/introducing-dynamic-workflows-in-claude-code" target="_blank" rel="noopener noreferrer">
-	<img src="/dynamic-workflows-preview-compact.png" alt="Claude Code blog post: Introducing dynamic workflows" />
-	<span>Claude Code blog · dynamic workflows</span>
+<a class="workflow-article" href="https://claude.com/blog/a-harness-for-every-task-dynamic-workflows-in-claude-code" target="_blank" rel="noopener noreferrer">
+	<img src="/claude-code-harness-for-every-task-dynamic-workflows.png" alt="Claude Code blog diagram: Six workflow patterns" />
+	<span>Claude Code blog · harness for every task</span>
 </a>
 
 <div class="workflow-example-links">

@@ -18,6 +18,8 @@
     "test:theme": "node scripts/assert-theme-default.mjs && node scripts/assert-rendered-theme.mjs",
     "test:theme:static": "node scripts/assert-theme-default.mjs",
     "test:theme:rendered": "node scripts/assert-rendered-theme.mjs",
+    "visual:qc": "node scripts/visual-qc-report.mjs",
+    "visual:qc:artifacts": "VISUAL_QA_ARTIFACTS=1 node scripts/assert-slide-layout.mjs",
     "social:capture": "node scripts/capture-social-cards.mjs",
     "theme:default": "node scripts/import-shadcn-theme.mjs cmlm03etv000204lh15608kec",
     "theme:import": "node scripts/import-shadcn-theme.mjs"

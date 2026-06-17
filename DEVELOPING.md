@@ -21,6 +21,7 @@ Run these from `web/`:
 ```bash
 bun run check        # svelte-check
 bun run test:design  # browser layout assertions across desktop/mobile viewports
+bun run test:social  # Open Graph/Twitter metadata and image dimensions
 bun run test:theme   # static + rendered theme assertions
 bun run build        # production build
 ```

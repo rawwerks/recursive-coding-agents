@@ -84,6 +84,7 @@ fi
 if [ "$skip_checks" -eq 0 ]; then
 	bun run check
 	bun run test:design
+	bun run test:social
 	bun run test:theme:static
 fi
 

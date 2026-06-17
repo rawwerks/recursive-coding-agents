@@ -52,4 +52,4 @@ slices, and returns the final answer through the outer model-call interface.
 
 ## License
 
-MIT
+Copyright (c) 2026 Raymond Weitekamp (https://RAW.works). All rights reserved.

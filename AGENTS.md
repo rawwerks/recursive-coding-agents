@@ -24,6 +24,7 @@ scripts/deploy-web.sh      checked Cloudflare deploy wrapper
 cd web
 bun run check
 bun run test:design
+bun run test:social
 bun run test:theme
 bun run build
 cd ..

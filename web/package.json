@@ -1,6 +1,7 @@
 {
   "name": "recursive-coding-agents-talk",
   "private": true,
+  "license": "UNLICENSED",
   "version": "0.1.0",
   "description": "Recursive Coding Agents — AI Engineer World's Fair 2026 talk by Raymond Weitekamp (OpenProse). Built from sveltekit-presentation-starter.",
   "type": "module",
@@ -13,9 +14,11 @@
     "cf:dev": "bun run build && wrangler dev",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "test:design": "node scripts/assert-slide-layout.mjs",
+    "test:social": "node scripts/assert-social-cards.mjs",
     "test:theme": "node scripts/assert-theme-default.mjs && node scripts/assert-rendered-theme.mjs",
     "test:theme:static": "node scripts/assert-theme-default.mjs",
     "test:theme:rendered": "node scripts/assert-rendered-theme.mjs",
+    "social:capture": "node scripts/capture-social-cards.mjs",
     "theme:default": "node scripts/import-shadcn-theme.mjs cmlm03etv000204lh15608kec",
     "theme:import": "node scripts/import-shadcn-theme.mjs"
   },

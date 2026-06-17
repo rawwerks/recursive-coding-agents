@@ -21,13 +21,12 @@ looks like one, and how to judge the difference.
 
 | If you want to... | Open |
 | --- | --- |
-| Watch or share the talk | https://recursivecodingagents.com |
+| See the presentation website (slides) | https://recursivecodingagents.com |
 | Understand the RLM definition | [`rlm-rubric/README.md`](rlm-rubric/README.md) |
 | Apply the full seven-gate rubric | [`rlm-rubric/rlm-rubric.md`](rlm-rubric/rlm-rubric.md) |
 | Judge a system with evidence | [`rlm-rubric/rlm-judging-methodology.md`](rlm-rubric/rlm-judging-methodology.md) |
 | Compare Claude Code workflow examples | [`claude-dynamic-workflows/`](claude-dynamic-workflows/) |
 | Compare OpenProse examples | [`openprose/`](openprose/) |
-| Develop or contribute | [`DEVELOPING.md`](DEVELOPING.md) |
 
 ## What is in the repo
 

@@ -44,6 +44,10 @@
       "symbolic_context": "BM25/vector index handle, corpus IDs, document IDs, or queryable store."
     }
   ],
+  "prompt_shape_notes": [
+    "For query-plus-context systems, do not require the root model to be blind to the user query or instructions. G2 is about whether the task context payload is externalized behind a symbolic handle rather than pasted wholesale into the root model context.",
+    "Prompt guidance, examples, or task-shape tips do not automatically fail G6. They should be recorded in the scope; judge G6 from trace evidence that the model made the concrete runtime choices about inspection, slicing, subcalls, aggregation, verification, and stopping."
+  ],
   "minimum_probe_suite": [
     {
       "id": "A",
@@ -69,12 +73,14 @@
     },
     {
       "id": "C",
-      "name": "Constructed Slice Subcall",
+      "name": "Constructed Slice Or Subproblem Subcall",
       "records": [
         "slicing_logic",
         "subcall_primitive_used",
         "subcall_inputs",
+        "dependency_graph_or_task_graph_representation_if_applicable",
         "aggregation_logic",
+        "verification_or_checking_of_subcall_outputs",
         "whether_intermediate_state_stayed_outside_root_model_context"
       ]
     },
@@ -146,6 +152,7 @@
   "rules": [
     "Use unknown when a gate was not tested.",
     "Use conditional when a product passes only for some configurations or prompt shapes.",
+    "Record prompt steering and task-shape hints in the scope, but judge G6 from the observed runtime control flow.",
     "Every pass must cite observed evidence or source paths.",
     "Every fail must include the strongest plausible contrary interpretation.",
     "A product-level verdict must summarize all tested run shapes, not collapse them into one label."
@@ -158,6 +165,7 @@
     "Deterministic adjudicator over structured reports.",
     "Prompt-shape matrix classification.",
     "Negative controls for positive claims.",
+    "Graph/dependency probes for task-decomposition claims.",
     "Trace diffing against sentinel values.",
     "Provenance ledger for commands, run IDs, versions, costs, and artifact paths.",
     "Escalation for disagreement, missing probes, or uncited gate passes."

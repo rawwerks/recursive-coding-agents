@@ -57,6 +57,10 @@ If a user tags a file and the agent uses `rg`, `jq`, `awk`, Python, SQL, or anot
 
 It is not enough for full RLM classification by itself. Full RLM also requires programmatic sub-LM or sub-RLM calls over constructed slices or subproblems, model-chosen decomposition, persistent intermediate state, and final answer assembly.
 
+For query-plus-context systems, do not require the root model to be blind to the user query or instructions. G2 is about whether the task context payload is externalized behind a symbolic handle rather than pasted wholesale into the root model context.
+
+Prompt guidance, examples, or task-shape tips do not automatically fail G6. They should be recorded in the scope. The run still needs trace evidence that the model made the concrete runtime choices about inspection, slicing, subcalls, aggregation, verification, and stopping.
+
 ## Minimum Probe Suite
 
 A robust judge should run or request probes instead of relying only on docs.
@@ -91,12 +95,12 @@ Record:
 
 Pass condition for symbolic manipulation: the trace shows the system used the handle to recover information not already present in generated code.
 
-### Probe C: Constructed Slice Subcall
+### Probe C: Constructed Slice Or Subproblem Subcall
 
 Give the system a resource with multiple separable sections and require it to:
 
 1. inspect the resource through a handle
-2. construct slices or subproblems in code
+2. construct slices, dependency nodes, or subproblems in code
 3. call sub-LMs or subagents on those constructed slices
 4. aggregate and verify a final answer
 
@@ -105,10 +109,12 @@ Record:
 - the slicing logic
 - the subcall primitive used
 - subcall inputs
+- dependency graph or task graph representation, if applicable
 - aggregation logic
+- verification or checking of subcall outputs
 - whether intermediate state stayed outside the root model context
 
-Pass condition for full recursion: generated code made sub-LM/sub-RLM calls over constructed slices, not just one manually written delegation prompt.
+Pass condition for full recursion: generated code made sub-LM/sub-RLM calls over constructed slices or subproblems, not just one manually written delegation prompt.
 
 ### Probe D: Negative Control
 
@@ -168,6 +174,7 @@ Rules:
 
 - Use `unknown` when a gate was not tested. Do not silently convert unknown to fail.
 - Use `conditional` when a product passes only for some configurations or prompt shapes.
+- Record prompt steering and task-shape hints in the scope, but judge G6 from the observed runtime control flow.
 - Every pass must cite observed evidence or source paths.
 - Every fail must include the strongest plausible contrary interpretation.
 - A product-level verdict must summarize all tested run shapes, not collapse them into one label.
@@ -183,9 +190,10 @@ Design the judging system so the subagent can be mediocre and the system still c
 5. Deterministic adjudicator: a script or lead agent applies hard gates to the structured reports and flags contradictions.
 6. Prompt-shape matrix: classify plain prompt, tagged file, repo path, structured context, and session-handle modes separately.
 7. Negative controls: every positive claim needs at least one nearby failing or downgraded run shape.
-8. Trace diffing: compare generated scripts and subcall inputs against sentinel values to detect hardcoding or context leakage.
-9. Provenance ledger: every verdict stores command lines, run IDs, versions, costs, and artifact paths.
-10. Escalation rule: disagreement, missing probes, or uncited gate passes automatically triggers a fresh run or a stronger reviewer.
+8. Graph/dependency probes: for task-decomposition claims, inspect whether generated code represents dependencies, launches subcalls, and checks their outputs.
+9. Trace diffing: compare generated scripts and subcall inputs against sentinel values to detect hardcoding or context leakage.
+10. Provenance ledger: every verdict stores command lines, run IDs, versions, costs, and artifact paths.
+11. Escalation rule: disagreement, missing probes, or uncited gate passes automatically triggers a fresh run or a stronger reviewer.
 
 ## Practical Verdict Format
 

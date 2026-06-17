@@ -1,15 +1,17 @@
 {
   "title": "Recursive Language Model Rubric",
   "generated_from": "agent synthesis over public RLM sources and repo-local methodology",
-  "definition": "A Recursive Language Model is an inference-time scaffold around a base LM that preserves the outer model-call interface while moving the user prompt or context into a persistent executable environment as symbolic state. The root LM is shown only metadata and handles for that state, then writes programs that inspect, transform, partition, and store intermediate results. From inside the same environment, those programs can invoke sub-LM or sub-RLM calls on programmatically constructed prompt slices or subproblems, including inside loops, and finally return either a direct answer or an environment variable as the model-call result.",
+  "definition": "A Recursive Language Model is an inference-time scaffold around a base LM that preserves the outer model-call interface while moving the task context payload into a persistent executable environment as symbolic state. If a run shape has no query/context split, the whole prompt is the payload; if it does have a split, the root LM may still see the query, instructions, and metadata while the context remains behind handles. The root LM then writes programs that inspect, transform, partition, and store intermediate results. From inside the same environment, those programs can invoke sub-LM or sub-RLM calls on programmatically constructed prompt slices or subproblems, including inside loops, and finally return either a direct answer or an environment variable as the model-call result.",
   "judging_methodology": "rlm-judging-methodology.md",
   "methodological_guardrails": [
     "Classify behavior, not branding.",
     "Classify the specific run shape, not only the product.",
     "A system calling itself an RLM is not enough; a system avoiding the term RLM is not disqualifying.",
     "The prompt/context can be a plain text prompt, tagged file, directory, repository, database, search index, session trajectory, or structured API context field.",
+    "For query-plus-context run shapes, the root model may see the query, instructions, and metadata; G2 is about whether the task context payload is externalized behind a symbolic handle.",
     "If a user tags a file and the agent uses rg, jq, awk, Python, SQL, or another deterministic tool against that handle, it is symbolically manipulating prompt/context state.",
     "Symbolic manipulation of prompt/context state is not enough for full RLM classification unless generated code also makes sub-LM or sub-RLM calls over constructed slices or subproblems.",
+    "Prompt guidance, examples, or task-shape tips do not fail model-chosen decomposition by themselves; judge whether the runtime trace shows the model making the concrete inspection, slicing, subcall, aggregation, verification, and stopping choices.",
     "Prefer observed traces, generated scripts, logs, prompts, runtime globals, source paths, and task records over surface names or documentation claims."
   ],
   "prompt_shape_matrix": [
@@ -47,7 +49,7 @@
     {
       "id": "G2",
       "name": "Prompt externalization",
-      "pass_condition": "The full prompt/context is bound as symbolic state in an environment, not simply pasted into the root model context."
+      "pass_condition": "The task context payload is bound as symbolic state in an environment, not simply pasted into the root model context. The root may still receive the user query, instructions, and metadata."
     },
     {
       "id": "G3",
@@ -86,7 +88,7 @@
     },
     {
       "name": "RLM-family ablation",
-      "meaning": "Has prompt externalization and an executable environment, but lacks recursive subcalls. This matches the paper's RLM(depth=0) ablation."
+      "meaning": "Has prompt/context externalization and an executable environment, but lacks recursive subcalls. This matches the paper's \"RLM with REPL, no sub-calls\" ablation."
     },
     {
       "name": "Full RLM",
@@ -192,7 +194,7 @@
     {
       "system": "Subagents",
       "why_close": "They delegate work to other model instances.",
-      "why_not_rlm": "A parent verbally asking subagents is not the same as code inside an environment calling submodels over constructed context slices."
+      "why_not_rlm": "A parent verbally asking subagents is not the same as code inside an environment calling submodels or subagents over constructed context slices. A subagent primitive can satisfy G5 only when it is callable from the executable environment over model-constructed slices or subproblems."
     },
     {
       "system": "Repeated self-call loop",
@@ -227,9 +229,14 @@
   ],
   "borderline_cases": [
     {
-      "name": "RLM(depth=0)",
+      "name": "Zero-recursion RLM ablation",
       "classification": "RLM-family ablation",
-      "reason": "It externalizes the prompt into a REPL and lets the model inspect or manipulate it, but has no recursive subcalls."
+      "reason": "The paper's \"RLM with REPL, no sub-calls\" ablation externalizes context into a REPL and lets the model inspect or manipulate it, but has no recursive subcalls. Avoid calling this RLM(depth=0) without explanation because the blog also uses depth=0 for the root LM inside a recursive setup."
+    },
+    {
+      "name": "Prompt-steered task decomposition",
+      "classification": "Can still be Full RLM if G1-G7 pass",
+      "reason": "Prompt guidance, examples, or task-shape tips should be recorded in the run shape, but they do not fail G6 if the model still chooses and executes the concrete decomposition, subcalls, aggregation, verification, and stopping at runtime."
     },
     {
       "name": "Coding agent with rlm_query",

@@ -3,7 +3,7 @@
 Claude Code *dynamic workflows* are JavaScript scripts (`*.workflow.js`) that
 orchestrate subagents with `agent()`, `parallel()`, `pipeline()`, `phase()`. This
 folder classifies them against [`../rlm-rubric/`](../rlm-rubric/). **The folder a
-file lives in is its verdict** — never copy a `not-rlm/` file as a template.
+file lives in is its verdict**.
 
 ## `rlm/` — these ARE RLMs (pass all of G1–G7)
 
@@ -35,6 +35,6 @@ pipeline → Fails G6.")
 
 ## `proven-run/`
 
-An actual executed RLM run: the workflow script, the redacted public run summary
+A verified RLM run: the workflow script, the redacted public run summary
 (7 agents + a synthetic validator fixture), the corpus, the model-generated
 slices, and the assessment. See [`proven-run/README.md`](proven-run/README.md).

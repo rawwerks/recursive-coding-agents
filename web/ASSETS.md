@@ -1,7 +1,7 @@
 # Public Asset Provenance
 
-Audience: public repo readers, contributors, and maintainers checking the
-provenance of bundled visual assets.
+Audience: public repo readers and maintainers checking the provenance of bundled
+visual assets.
 
 This site includes preview images and screenshots as cited evidence in a public
 talk deck. Rights remain with their original owners. The local copies are used as

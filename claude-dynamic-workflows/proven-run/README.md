@@ -1,7 +1,7 @@
-# Proven run — an RLM we actually executed
+# Proven run — executed full-RLM trace
 
-This is the one run we executed end-to-end and verified as a full RLM: 7 agents
-plus a synthetic validator fixture.
+This folder contains an end-to-end run verified as a full RLM: 7 agents plus a
+synthetic validator fixture.
 
 | file | what it is |
 |---|---|
@@ -17,6 +17,6 @@ The script here is the example counterpart in
 [`../rlm/`](../rlm/) made concrete: a real run, with the evidence that it passes
 G1–G7.
 
-Raw Claude session journals and per-agent transcripts stayed in the local Claude
-store and are not included here. This folder contains the public-safe copied
-workflow, run record, corpus, generated slices, and assessment.
+This public artifact includes the redacted run summary, copied workflow, corpus,
+generated slices, and assessment. Raw execution logs are intentionally out of
+scope.

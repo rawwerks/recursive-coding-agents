@@ -1,100 +1,54 @@
-# recursive-coding-agents
+# Recursive Coding Agents
 
-Talk and website for **Recursive Coding Agents** — Raymond Weitekamp (OpenProse),
-AI Engineer World's Fair 2026.
+Public talk deck, RLM rubric, and calibration examples for Raymond
+Weitekamp's **Recursive Coding Agents** talk at AI Engineer World's Fair 2026.
 
-## Documentation audiences
+The live presentation is a website: **https://recursivecodingagents.com**
 
-All checked-in docs are public-safe, but they serve different readers:
+## Why this exists
 
-| Audience | Start here | Purpose |
-| --- | --- | --- |
-| External human readers | This `README.md`, the live site, `rlm-rubric/README.md` | Understand the talk, the RLM definition, and the example set. |
-| External agent users / evaluators | `rlm-rubric/rlm-rubric.md`, `rlm-rubric/rlm-judging-methodology.md`, `claude-dynamic-workflows/`, `openprose/` | Classify systems against the RLM gates or reuse the public examples as calibration fixtures. |
-| Human contributors / maintainers | `web/README.md`, `web/ASSETS.md`, `scripts/deploy-web.sh`, `.githooks/` | Run, test, modify, verify, and deploy the public site. |
-| Internal human + agent maintainers | `web/PRODUCT.md`, `web/DESIGN.md`, `web/.impeccable/` | Preserve product intent, design rules, and maintainer context while editing the deck/site. |
+Modern coding agents are powerful, but reliability is still the bottleneck. This
+project explains recursive coding agents through the lens of **Recursive Language
+Models (RLMs)**: systems that keep context as symbolic state, use code to inspect
+and slice it, call models or agents over those slices, and aggregate the result
+through a verifiable process.
 
-Private operational context for agents belongs in mycelium/git notes, not in
-public markdown files.
+The repo is both a companion artifact for the talk and a public calibration set:
+it gives humans and agents concrete examples of what counts as an RLM, what only
+looks like one, and how to judge the difference.
 
-## Layout
+## Start here
 
-```
+| If you want to... | Open |
+| --- | --- |
+| Watch or share the talk | https://recursivecodingagents.com |
+| Understand the RLM definition | [`rlm-rubric/README.md`](rlm-rubric/README.md) |
+| Apply the full seven-gate rubric | [`rlm-rubric/rlm-rubric.md`](rlm-rubric/rlm-rubric.md) |
+| Judge a system with evidence | [`rlm-rubric/rlm-judging-methodology.md`](rlm-rubric/rlm-judging-methodology.md) |
+| Compare Claude Code workflow examples | [`claude-dynamic-workflows/`](claude-dynamic-workflows/) |
+| Compare OpenProse examples | [`openprose/`](openprose/) |
+
+## What is in the repo
+
+```text
 recursive-coding-agents/
-├── web/                       SvelteKit deck + website (the slides are the site)
-├── rlm-rubric/                the RLM yardstick: definition + 7 gates + judging method
-├── claude-dynamic-workflows/  Claude Code .workflow.js — RLM vs not-RLM (+ a proven run)
-└── openprose/                 OpenProse .prose.md — RLM vs not-RLM
+├── web/                       public SvelteKit deck/site source
+├── rlm-rubric/                RLM definition, seven gates, and judging method
+├── claude-dynamic-workflows/  Claude Code workflow examples: RLM vs not-RLM
+└── openprose/                 OpenProse program examples: RLM vs not-RLM
 ```
 
-The deck under `web/` is a real, server-rendered, mobile-responsive website that
-also works as a full-screen presentation.
+The example folders are intentionally verdict-shaped. In `claude-dynamic-workflows/`
+and `openprose/`, files under `rlm/` are positive examples; files under
+`not-rlm/` are nearby negative controls.
 
-## Instructional materials (standalone from `web/`)
+## One-line RLM definition
 
-Three sibling folders are a self-contained teaching set for **Recursive Language
-Models (RLMs)** — what counts as one, and what doesn't. They stand alone; the deck
-may link to them later.
+An RLM moves prompt/context into a persistent executable environment as symbolic
+state, shows the root model only handles and metadata, lets the model write code
+that inspects and slices that state, recursively calls models or agents over the
+slices, and returns the final answer through the outer model-call interface.
 
-- **[`rlm-rubric/`](rlm-rubric/)** — the yardstick: the RLM definition and seven hard gates (G1–G7), plus the judging methodology.
-- **[`claude-dynamic-workflows/`](claude-dynamic-workflows/)** — Claude Code `*.workflow.js` sorted into `rlm/` and `not-rlm/`, plus a `proven-run/` we executed end-to-end.
-- **[`openprose/`](openprose/)** — OpenProse `*.prose.md` sorted into `rlm/` and `not-rlm/`.
+## License
 
-In every example folder, **the subfolder name is the verdict**: `rlm/` passes all
-seven gates; `not-rlm/` holds nearby shapes that each fail one — calibration, so a
-judge can't pass everything merely for having tools, subagents, loops, or code.
-
-## Develop
-
-```bash
-cd web
-bun install
-bun run dev          # http://localhost:5173
-```
-
-## Local hooks
-
-This repo keeps shared Git hooks in `.githooks/`. Activate them once per clone:
-
-```bash
-git config core.hooksPath .githooks
-```
-
-The pre-commit hook runs `gitleaks git --staged --redact --no-banner` and
-blocks commits if staged changes contain secrets.
-
-The pre-push hook does not deploy. When pushing to `main`, it prints a reminder
-that the site is updated separately with `scripts/deploy-web.sh`.
-
-## Build & deploy (Cloudflare)
-
-The site builds to a Cloudflare Worker with static assets via
-[`@sveltejs/adapter-cloudflare`](https://svelte.dev/docs/kit/adapter-cloudflare).
-Build output and the asset binding are configured in `web/wrangler.jsonc`.
-Deploys publish the Worker to the custom domains `recursivecodingagents.com`
-and `www.recursivecodingagents.com`.
-
-```bash
-cd web
-bun run build        # emits web/.svelte-kit/cloudflare/
-bun run deploy:dry   # build + `wrangler deploy --dry-run` (no upload)
-bun run deploy       # build + `wrangler deploy`
-bun run cf:dev       # build + `wrangler dev` (local Workers runtime)
-```
-
-From the repo root, use the wrapper script for checked deploys:
-
-```bash
-scripts/deploy-web.sh --dry-run   # build + dry-run deploy
-scripts/deploy-web.sh             # checks, build, deploy, public status checks
-```
-
-The deploy script does not contain Cloudflare credentials or account IDs. It
-uses the operator's private Wrangler authentication, and Cloudflare only accepts
-the custom-domain routes from an account that controls those zones. Do not pass
-tokens as command-line arguments; use local Wrangler auth or a private CI secret.
-
-For Cloudflare's Git-connected builds, set the project **root directory** to
-`web/`, build command `bun run build`, and let Wrangler pick up `wrangler.jsonc`.
-
-See `web/README.md` for slide authoring, theming, and the full app docs.
+MIT

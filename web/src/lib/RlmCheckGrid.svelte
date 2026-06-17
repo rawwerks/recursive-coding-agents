@@ -13,9 +13,7 @@
 
 	const ROWS = [
 		{ sys: 'Plain long-context call', tag: 'RAG / reasoning-only', marks: [0, 0, 0, 0, 0], rlm: false },
-		{ sys: 'Subagents', tag: 'verbal delegation', marks: [0, 0, 0, 1, 0], rlm: false },
-		{ sys: 'Coding agent + bash', tag: 'CodeAct-style, one session', marks: [1, 0, 0, 1, 0], rlm: false },
-		{ sys: 'Agentic loops', tag: "Ralph + the 2026 'loop engineering' wave", marks: [1, 0, 0, 0, 1], rlm: false },
+		{ sys: 'Coding agents + subagents', tag: 'including loops', marks: [1, 1, 0, 1, 1], rlm: false },
 		{ sys: 'Hardcoded map-reduce', tag: 'developer-authored pipeline — e.g. λ-RLM', marks: [1, 1, 1, 0, 1], rlm: false },
 		{ sys: 'Recursive Language Model', tag: 'passes every check', marks: [1, 1, 1, 1, 1], rlm: true }
 	];

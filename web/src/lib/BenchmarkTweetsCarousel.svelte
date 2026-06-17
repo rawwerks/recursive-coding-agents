@@ -12,7 +12,7 @@
 			label: 'LongCoT Open Harness',
 			href: 'https://x.com/sumeetrm/status/2046014614987550941',
 			img: '/x-card-sumeet-motwani-longcot-open-harness-gpt-5-2-rlm-sota.png',
-			alt: 'Sumeet Motwani on X announcing LongCoT Open Harness and Restricted Harness leaderboards, with GPT-5.2 RLM SOTA on Open Harness'
+			alt: 'Sumeet Motwani on X announcing LongCoT Open Harness and Restricted Harness leaderboards, with GPT 5.2 RLM SOTA on Open Harness'
 		}
 	];
 
@@ -25,8 +25,21 @@
 	let paused = $state(false);
 
 	let pauseTimer: ReturnType<typeof setTimeout> | null = null;
+	let swipe:
+		| {
+				pointerId: number;
+				startX: number;
+				startY: number;
+				lastX: number;
+				lastY: number;
+				isHorizontal: boolean;
+		  }
+		| null = null;
+	let suppressClickUntil = 0;
 	const autoRotateMs = 4_500;
 	const resumeDelayMs = 12_000;
+	const swipeThresholdPx = 48;
+	const swipeAxisLockPx = 10;
 
 	function syncActiveFromScroll() {
 		if (!track) return;
@@ -62,6 +75,69 @@
 			paused = false;
 			pauseTimer = null;
 		}, resumeDelayMs);
+	}
+
+	function handlePointerDown(event: PointerEvent) {
+		if (!mobile || event.pointerType === 'mouse') return;
+		pauseAfterInteraction();
+		swipe = {
+			pointerId: event.pointerId,
+			startX: event.clientX,
+			startY: event.clientY,
+			lastX: event.clientX,
+			lastY: event.clientY,
+			isHorizontal: false
+		};
+		(event.currentTarget as HTMLElement).setPointerCapture?.(event.pointerId);
+	}
+
+	function handlePointerMove(event: PointerEvent) {
+		if (!swipe || event.pointerId !== swipe.pointerId) return;
+
+		swipe.lastX = event.clientX;
+		swipe.lastY = event.clientY;
+		const dx = event.clientX - swipe.startX;
+		const dy = event.clientY - swipe.startY;
+		const horizontalIntent =
+			Math.abs(dx) > swipeAxisLockPx && Math.abs(dx) > Math.abs(dy) * 1.2;
+
+		if (horizontalIntent) {
+			swipe.isHorizontal = true;
+			event.preventDefault();
+		}
+	}
+
+	function handlePointerEnd(event: PointerEvent) {
+		if (!swipe || event.pointerId !== swipe.pointerId) return;
+		(event.currentTarget as HTMLElement).releasePointerCapture?.(event.pointerId);
+
+		const dx = swipe.lastX - swipe.startX;
+		const dy = swipe.lastY - swipe.startY;
+		const isSwipe =
+			swipe.isHorizontal &&
+			Math.abs(dx) >= swipeThresholdPx &&
+			Math.abs(dx) > Math.abs(dy) * 1.2;
+		swipe = null;
+
+		if (!isSwipe) return;
+
+		event.preventDefault();
+		suppressClickUntil = performance.now() + 450;
+		const direction = dx < 0 ? 1 : -1;
+		show(Math.max(0, Math.min(posts.length - 1, active + direction)));
+	}
+
+	function handlePointerCancel(event: PointerEvent) {
+		if (!swipe || event.pointerId !== swipe.pointerId) return;
+		(event.currentTarget as HTMLElement).releasePointerCapture?.(event.pointerId);
+		swipe = null;
+	}
+
+	function guardClickAfterSwipe(event: MouseEvent) {
+		if (performance.now() <= suppressClickUntil) {
+			event.preventDefault();
+			event.stopPropagation();
+		}
 	}
 
 	onMount(() => {
@@ -118,13 +194,27 @@
 	data-benchmark-tweets
 	aria-label="Two X posts about agents, RLMs, and benchmark evaluation"
 	aria-roledescription="carousel"
-	onpointerdown={pauseAfterInteraction}
 	onfocusin={pauseAfterInteraction}
 >
-	<div bind:this={track} class="benchmark-tweets__track">
+	<div
+		bind:this={track}
+		class="benchmark-tweets__track"
+		role="group"
+		aria-label="Benchmark posts"
+		onpointerdown={handlePointerDown}
+		onpointermove={handlePointerMove}
+		onpointerup={handlePointerEnd}
+		onpointercancel={handlePointerCancel}
+	>
 		{#each posts as post, index}
 			<article class="benchmark-tweets__panel" data-benchmark-panel={index}>
-				<a class="benchmark-tweets__link" href={post.href} target="_blank" rel="noopener noreferrer">
+				<a
+					class="benchmark-tweets__link"
+					href={post.href}
+					target="_blank"
+					rel="noopener noreferrer"
+					onclick={guardClickAfterSwipe}
+				>
 					<img class="benchmark-tweets__image" src={post.img} alt={post.alt} />
 				</a>
 			</article>
@@ -217,6 +307,7 @@
 			scroll-padding-inline: 0.35rem;
 			scroll-snap-type: x mandatory;
 			padding: 0.05rem 0.35rem 0.45rem;
+			touch-action: pan-y;
 			-webkit-overflow-scrolling: touch;
 			scrollbar-width: none;
 		}
@@ -240,6 +331,7 @@
 			height: min(62dvh, 500px);
 			overflow: auto;
 			overscroll-behavior: contain;
+			touch-action: pan-y;
 			border-radius: 8px;
 			background: color-mix(in oklch, var(--deck-text) 4%, var(--deck-bg));
 		}

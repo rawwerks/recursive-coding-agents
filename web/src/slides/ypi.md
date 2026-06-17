@@ -9,10 +9,10 @@ eyebrow: My Experiments
 
 # Finding [ypi](https://github.com/rawwerks/ypi)
 
-Built on [Pi](https://github.com/badlogic/pi-mono) (minimal, extensible). Previously, Pi extensions could not support recursion — so I forked it. Y is for the [Y-combinator](https://en.wikipedia.org/wiki/Fixed-point_combinator#Y_combinator).
+Built on [Pi](https://github.com/badlogic/pi-mono) (minimal, extensible). Previously pi extensions could not support recursion — so I forked it. Y is for the [Y-combinator](https://en.wikipedia.org/wiki/Fixed-point_combinator#Y_combinator).
 
-- **Wrapper CLI** — `ypi`: a fully recursive Pi agent.
-- **Pi Extension** — `pi-recursive`: make any existing Pi config recursive.
+- **Wrapper CLI** — `ypi` - a fully recursive Pi agent.
+- **Pi Extension** — `pi-recursive` - make any existing Pi config recursive.
 
 <div class="repo-preview-grid">
 	<GitHubRepoPreview

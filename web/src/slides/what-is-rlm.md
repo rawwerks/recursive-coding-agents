@@ -9,8 +9,6 @@ eyebrow: Recursive Language Models
 
 ## Context itself is the object of computation
 
-A Recursive Language Model keeps the problem outside the context window, uses code to slice it, then calls the model again on the slices.
-
 - **Externalize** — the full prompt lives in a REPL, not the context window.
 - **Operate** — the model writes code to inspect, slice, and transform it.
 - **Recurse** — it sub-queries itself over the slices.

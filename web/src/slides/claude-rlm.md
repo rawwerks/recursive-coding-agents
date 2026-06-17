@@ -14,7 +14,7 @@ eyebrow: Claude Code
 			kind: 'no',
 			img: '/tweet-claude-subagents-no.png',
 			href: 'https://x.com/garybasin/status/1978608030787784780',
-			alt: 'Alex Zhang announcing Recursive Language Models on X, with Gary Basin replying below: "This is effectively Claude Code sub-agents right?"'
+			alt: 'alex zhang announcing Recursive Language Models on X, with Gary Basin replying below: "This is effectively Claude code sub-agents right?"'
 		},
 		{
 			when: 'Q2 2026',

@@ -4,7 +4,7 @@ alt: true
 eyebrow: Thesis
 ---
 
-# Today's agents are <span class="nowrap">mismanaged</span> geniuses
+# Today's agents are <span class="nowrap">mis-managed</span> geniuses
 
 The intelligence is there.
 

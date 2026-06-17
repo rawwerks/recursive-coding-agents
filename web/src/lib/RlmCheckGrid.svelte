@@ -97,7 +97,7 @@
 
 	<a
 		class="rlm-rubric-link"
-		href="https://github.com/rawwerks/recursive-coding-agents/tree/main/rlm-rubric"
+		href="https://github.com/rawwerks/recursive-coding-agents/blob/main/rlm-rubric/README.md"
 		target="_blank"
 		rel="noopener noreferrer"
 	>

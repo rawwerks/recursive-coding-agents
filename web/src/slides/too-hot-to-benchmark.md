@@ -1,5 +1,5 @@
 ---
-label: Too Hot to Benchmark
+label: Too Hot To Benchmark
 alt: true
 align: center
 
@@ -9,6 +9,6 @@ align: center
 	import BenchmarkTweetsCarousel from '$lib/BenchmarkTweetsCarousel.svelte';
 </script>
 
-## RLMs: Too Hot to Benchmark
+## RLMs: Too Hot To Benchmark
 
 <BenchmarkTweetsCarousel />

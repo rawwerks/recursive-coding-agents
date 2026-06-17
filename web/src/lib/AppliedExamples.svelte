@@ -20,7 +20,7 @@
 			href: 'https://claude.com/blog/a-harness-for-every-task-dynamic-workflows-in-claude-code',
 			accent: '#e06f2f',
 			icon: GitBranchPlusIcon,
-			body: 'Split a large refactor into modules, call sites, or failing tests; workers patch isolated worktrees, then reviewer agents check the merge.'
+			body: 'Split a large refactor into modules, callsites, or failing tests; workers patch isolated worktrees, then reviewer agents check the merge.'
 		},
 		{
 			title: 'Repo-handle investigation',

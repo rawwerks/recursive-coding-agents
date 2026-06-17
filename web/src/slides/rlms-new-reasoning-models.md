@@ -1,5 +1,5 @@
 ---
-label: Code Execution as Reasoning
+label: Code Execution As Reasoning
 variant: split
 eyebrow: Recursive Language Models
 ---
@@ -7,7 +7,7 @@ eyebrow: Recursive Language Models
 <div class="evidence-split">
 	<div>
 
-		<h1>Code Execution as Reasoning</h1>
+		<h1>Code Execution As Reasoning</h1>
 		<ul>
 			<li>Can process inputs way beyond the context window. <a href="https://arxiv.org/abs/2512.24601" target="_blank" rel="noopener noreferrer">(Oolong) RLM paper</a></li>
 			<li>RLM is itself a powerful memory system. <a href="https://raw.works/recursive-language-models-as-memory-systems/" target="_blank" rel="noopener noreferrer">LongMemEval results</a></li>

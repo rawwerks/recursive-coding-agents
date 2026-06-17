@@ -285,6 +285,174 @@ async function evaluateInPage(page, viewport, expression) {
 	}
 }
 
+async function probeBenchmarkCarouselTouchSwipe(page) {
+	const ws = new WebSocket(page.webSocketDebuggerUrl);
+	let nextId = 1;
+	const pending = new Map();
+
+	const onMessage = (event) => {
+		let message;
+		try {
+			message = JSON.parse(event.data);
+		} catch (error) {
+			for (const { reject } of pending.values()) {
+				reject(error instanceof Error ? error : new Error(String(error)));
+			}
+			pending.clear();
+			return;
+		}
+
+		if (!message.id || !pending.has(message.id)) return;
+		const { resolve, reject } = pending.get(message.id);
+		pending.delete(message.id);
+		message.error ? reject(new Error(message.error.message)) : resolve(message.result);
+	};
+
+	ws.onmessage = onMessage;
+
+	try {
+		await new Promise((resolve, reject) => {
+			const cleanup = () => {
+				ws.onopen = null;
+				ws.onerror = null;
+			};
+			ws.onopen = () => {
+				cleanup();
+				resolve();
+			};
+			ws.onerror = () => {
+				cleanup();
+				reject(new Error('Could not connect to Chromium page websocket.'));
+			};
+		});
+
+		function send(method, params = {}) {
+			const id = nextId++;
+			ws.send(JSON.stringify({ id, method, params }));
+			return new Promise((resolve, reject) => pending.set(id, { resolve, reject }));
+		}
+
+		async function evaluate(expression) {
+			const result = await send('Runtime.evaluate', {
+				expression,
+				awaitPromise: true,
+				returnByValue: true
+			});
+			if (result.exceptionDetails) fail(result.exceptionDetails.text ?? 'Browser evaluation failed.');
+			return result.result.value;
+		}
+
+		await send('Runtime.enable');
+		await send('Page.enable');
+		await send('Emulation.setDeviceMetricsOverride', {
+			width: 390,
+			height: 844,
+			deviceScaleFactor: 1,
+			mobile: true
+		});
+		await evaluate(`new Promise((resolve) => {
+			const deadline = performance.now() + 8000;
+			const tick = () => {
+				if (document.readyState !== 'loading' && document.querySelector('.slide')) {
+					resolve(true);
+					return;
+				}
+				if (performance.now() > deadline) {
+					resolve(false);
+					return;
+				}
+				requestAnimationFrame(tick);
+			};
+			tick();
+		})`);
+		await delay(150);
+
+		const setup = await evaluate(`((async () => {
+			const deck = document.querySelector('.deck');
+			const slide = Array.from(document.querySelectorAll('.slide')).find(
+				(candidate) => candidate.getAttribute('data-label')?.toLowerCase() === 'too hot to benchmark'
+			);
+			if (!deck || !slide) return { error: 'Benchmark carousel slide did not render.' };
+			deck.style.scrollBehavior = 'auto';
+			deck.scrollTop = slide.offsetTop;
+			await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+
+			const carousel = slide.querySelector('[data-benchmark-tweets]');
+			if (!carousel) return { error: 'Benchmark carousel did not render inside the target slide.' };
+			carousel.querySelector('.benchmark-tweets__dot')?.click();
+			await new Promise((resolve) => setTimeout(resolve, 700));
+
+			const link = carousel.querySelector('.benchmark-tweets__link');
+			const track = carousel.querySelector('.benchmark-tweets__track');
+			if (!link || !track) return { error: 'Benchmark carousel track/link did not render.' };
+			const linkRect = link.getBoundingClientRect();
+			return {
+				active: Array.from(carousel.querySelectorAll('.benchmark-tweets__dot')).findIndex((dot) =>
+					dot.classList.contains('active')
+				),
+				scrollLeft: Math.round(track.scrollLeft),
+				startX: Math.round(linkRect.left + linkRect.width * 0.82),
+				endX: Math.round(linkRect.left + linkRect.width * 0.18),
+				y: Math.round(linkRect.top + linkRect.height * 0.52),
+				linkRect: {
+					left: Math.round(linkRect.left),
+					right: Math.round(linkRect.right),
+					top: Math.round(linkRect.top),
+					bottom: Math.round(linkRect.bottom)
+				}
+			};
+		})())`);
+		if (setup.error) return setup;
+		if (setup.active !== 0) {
+			return { error: 'Benchmark carousel swipe test could not reset to the first post.', setup };
+		}
+
+		const steps = 9;
+		const touchPoint = (index) => ({
+			x: Math.round(setup.startX + ((setup.endX - setup.startX) * index) / steps),
+			y: setup.y + (index % 2),
+			id: 1,
+			radiusX: 4,
+			radiusY: 4,
+			force: 1
+		});
+		await send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [touchPoint(0)] });
+		for (let step = 1; step <= steps; step++) {
+			await send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [touchPoint(step)] });
+			await delay(30);
+		}
+		await send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+		await delay(900);
+
+		const after = await evaluate(`(() => {
+			const carousel = document.querySelector('[data-benchmark-tweets]');
+			const track = carousel?.querySelector('.benchmark-tweets__track');
+			if (!carousel || !track) return { error: 'Benchmark carousel disappeared after touch swipe.' };
+			return {
+				active: Array.from(carousel.querySelectorAll('.benchmark-tweets__dot')).findIndex((dot) =>
+					dot.classList.contains('active')
+				),
+				scrollLeft: Math.round(track.scrollLeft),
+				clientWidth: track.clientWidth,
+				scrollWidth: track.scrollWidth
+			};
+		})()`);
+		if (after.error) return after;
+		if (after.active !== 1 || after.scrollLeft <= setup.scrollLeft + 100) {
+			return {
+				error: 'Benchmark carousel did not respond to a left touch swipe.',
+				before: setup,
+				after
+			};
+		}
+
+		return { before: setup, after };
+	} finally {
+		ws.onmessage = null;
+		ws.close();
+	}
+}
+
 function assertUnifiedWidths(caseName, result) {
 	if (result.error) fail(`${caseName}: ${result.error}`);
 
@@ -771,7 +939,7 @@ try {
 				} else {
 					const gridRect = rect(rlmGrid);
 					const linkRect = rect(rubricLink);
-					if (!rubricLink.href.includes('/recursive-coding-agents/tree/main/rlm-rubric')) {
+					if (!rubricLink.href.includes('/recursive-coding-agents/blob/main/rlm-rubric/README.md')) {
 						push('rlm-rubric-link', 'RLM rubric link targets the wrong URL', {
 							href: rubricLink.href
 						});
@@ -1538,6 +1706,12 @@ try {
 		fail(`${benchmarkCarouselResult.error}\n${JSON.stringify(benchmarkCarouselResult, null, 2)}`);
 	}
 	console.log('mobile benchmark carousel passed (dots visible, auto-rotates).');
+
+	const benchmarkSwipeResult = await probeBenchmarkCarouselTouchSwipe(chromium.page);
+	if (benchmarkSwipeResult.error) {
+		fail(`${benchmarkSwipeResult.error}\n${JSON.stringify(benchmarkSwipeResult, null, 2)}`);
+	}
+	console.log('mobile benchmark carousel swipe passed (touch drag advances posts).');
 } finally {
 	if (chromium) await chromium.stop();
 	if (vite) {

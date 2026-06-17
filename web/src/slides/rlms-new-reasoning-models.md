@@ -16,7 +16,7 @@ eyebrow: Recursive Language Models
 
 	</div>
 
-	<a class="evidence-card" href="https://raw.works/rlms-are-the-new-reasoning-models/" target="_blank" rel="noopener noreferrer">
+	<a class="evidence-card rlm-article-x-card" href="https://x.com/raw_works/status/2046240194999755153" target="_blank" rel="noopener noreferrer">
 		<img src="/x-card-raw-works-rlms-are-the-new-reasoning-models-article.png" alt="X card for the RAW.works article RLMs are the new reasoning models, including article preview text and social proof" />
 	</a>
 </div>

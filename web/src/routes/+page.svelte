@@ -237,11 +237,74 @@
 	:global(.slide .content .prose .nowrap) {
 		white-space: nowrap;
 	}
+	:global(.slide[data-label='We all want outcomes'] .content) {
+		min-height: calc(100dvh - (var(--pad) * 2));
+		display: flex;
+		flex-direction: column;
+	}
+	:global(.slide[data-label='We all want outcomes'] .content .prose) {
+		flex: 1;
+		min-height: 0;
+		display: flex;
+	}
+	:global(.slide .content .prose .outcomes-layout) {
+		flex: 1;
+		min-height: 0;
+		display: grid;
+		grid-template-rows: minmax(0, 1fr) auto;
+		gap: clamp(1.2rem, 4dvh, 3rem);
+	}
+	:global(.slide .content .prose .outcomes-copy) {
+		align-self: center;
+	}
+	:global(.slide .content .prose .outcomes-progression) {
+		display: flex;
+		justify-content: center;
+		align-self: end;
+		width: min(880px, 76vw, calc(16dvh * 2048 / 499));
+		margin: 0 auto clamp(2.4rem, 5.5dvh, 4rem);
+		pointer-events: none;
+	}
+	:global(.slide .content .prose .outcomes-progression img) {
+		display: block;
+		width: 100%;
+		height: auto;
+		opacity: 0.72;
+		filter: drop-shadow(0 18px 28px color-mix(in oklch, var(--deck-text) 18%, transparent));
+	}
 	:global(.slide .content .prose .paper-split) {
 		display: grid;
 		grid-template-columns: minmax(0, 0.92fr) minmax(320px, 0.78fr);
 		gap: clamp(1.5rem, 4vw, 3rem);
 		align-items: center;
+	}
+	:global(.slide .content .prose .rlm-definition-layout) {
+		display: grid;
+		grid-template-rows: minmax(0, 1fr) auto;
+		gap: clamp(1rem, 3dvh, 2rem);
+		min-height: min(72dvh, 660px);
+	}
+	:global(.slide .content .prose .rlm-definition-layout .paper-split) {
+		align-self: center;
+	}
+	:global(.slide .content .prose .rlm-tree-example) {
+		justify-self: center;
+		width: fit-content;
+		max-width: 100%;
+		margin: 0;
+		padding: 0;
+		border: 0;
+		background: transparent;
+		color: color-mix(in oklch, var(--deck-text) 82%, var(--deck-muted));
+		font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono',
+			monospace;
+		font-size: clamp(0.9rem, 0.72rem + 0.52vw, 1.18rem);
+		font-weight: 560;
+		line-height: 1.2;
+		letter-spacing: 0;
+		text-align: left;
+		white-space: pre;
+		text-shadow: 0 12px 34px color-mix(in oklch, var(--deck-text) 18%, transparent);
 	}
 	:global(.slide .content .prose .evidence-split) {
 		display: grid;
@@ -261,6 +324,11 @@
 		border-radius: 8px;
 		border: 1px solid color-mix(in oklch, var(--deck-text) 18%, transparent);
 		box-shadow: 0 28px 70px -38px color-mix(in oklch, var(--deck-text) 55%, transparent);
+	}
+	:global(.slide .content .prose .rlm-article-x-card img) {
+		border: 0;
+		box-shadow: none;
+		background: transparent;
 	}
 	:global(.slide .content .prose .slide-footer-claim) {
 		max-width: 100%;
@@ -489,6 +557,45 @@
 			color-mix(in oklch, var(--deck-text) 22%, transparent) 82%,
 			transparent
 		);
+	}
+	:global(.slide .content .prose .bridge-slide-layout) {
+		display: grid;
+		gap: clamp(1.35rem, 3dvh, 2rem);
+		width: 100%;
+		align-items: center;
+	}
+	:global(.slide .content .prose .bridge-slide-layout .bridge-quotes) {
+		gap: clamp(0.7rem, 1.6dvh, 1.1rem);
+	}
+	:global(.slide .content .prose .bridge-slide-layout .bridge-quotes blockquote p) {
+		font-size: clamp(1.7rem, 1.04rem + 2.3vw, 3.1rem);
+		line-height: 1.06;
+	}
+	:global(.slide .content .prose .bridge-tree-comparison) {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: clamp(1.2rem, 3vw, 2.8rem);
+		align-items: center;
+		width: min(100%, 1180px);
+		margin: 0 auto;
+	}
+	:global(.slide .content .prose .bridge-tree-panel) {
+		display: grid;
+		justify-items: center;
+		align-content: center;
+		gap: clamp(0.75rem, 1.7vw, 1.1rem);
+		min-width: 0;
+		margin: 0;
+		padding: 0;
+	}
+	:global(.slide .content .prose .bridge-tree-panel h2) {
+		margin: 0;
+		font-size: clamp(1.05rem, 0.84rem + 0.78vw, 1.5rem);
+		font-weight: 820;
+		line-height: 1.05;
+		color: var(--deck-accent);
+		text-align: center;
+		text-wrap: balance;
 	}
 	:global(.slide .content .prose .repo-preview-grid) {
 		display: grid;
@@ -772,6 +879,29 @@
 			font-size: 2.15rem;
 			line-height: 1.16;
 		}
+		:global(.slide .content .prose .bridge-slide-layout) {
+			gap: 0.8rem;
+		}
+		:global(.slide .content .prose .bridge-slide-layout .bridge-quotes) {
+			gap: 0.5rem;
+		}
+		:global(.slide .content .prose .bridge-slide-layout .bridge-quotes blockquote p) {
+			font-size: clamp(1.02rem, 4.6vw, 1.45rem);
+			line-height: 1.1;
+		}
+		:global(.slide .content .prose .bridge-tree-comparison) {
+			grid-template-columns: 1fr;
+			gap: 0.72rem;
+			align-items: start;
+			width: 100%;
+		}
+		:global(.slide .content .prose .bridge-tree-panel) {
+			gap: 0.44rem;
+		}
+		:global(.slide .content .prose .bridge-tree-panel h2) {
+			font-size: clamp(0.84rem, 3.4vw, 1rem);
+			line-height: 1;
+		}
 		:global(.slide .content .prose .url-previews),
 		:global(.slide .content .prose .evidence-split),
 		:global(.slide .content .prose .workflow-showcase),
@@ -927,6 +1057,20 @@
 		}
 		:global(.slide .content .prose .evidence-card img) {
 			max-height: 32dvh;
+		}
+		:global(.slide .content .prose .outcomes-progression) {
+			width: min(340px, 82vw, calc(10dvh * 2048 / 499));
+		}
+		:global(.slide[data-label='We all want outcomes'] .content) {
+			min-height: calc(100dvh - (var(--pad) * 2) - 32px);
+		}
+		:global(.slide .content .prose .rlm-definition-layout) {
+			gap: 0.72rem;
+			min-height: auto;
+		}
+		:global(.slide .content .prose .rlm-tree-example) {
+			font-size: clamp(0.56rem, 2.15vw, 0.68rem);
+			line-height: 1.12;
 		}
 	}
 	@media (max-width: 380px) and (max-height: 760px) {

@@ -4,8 +4,9 @@ variant: split
 eyebrow: Recursive Language Models
 ---
 
-<div class="paper-split">
-	<div>
+<div class="rlm-definition-layout">
+	<div class="paper-split">
+		<div>
 
 ## Context itself is the object of computation
 
@@ -14,10 +15,19 @@ eyebrow: Recursive Language Models
 - **Recurse** — it sub-queries itself over the slices.
 
 
+		</div>
+
+		<a class="paper-preview" href="https://arxiv.org/abs/2512.24601" target="_blank" rel="noopener noreferrer">
+			<img src="/rlm-arxiv-preview.png" alt="Top half of the first page of the Recursive Language Models arXiv paper" />
+			<span>arXiv:2512.24601</span>
+		</a>
 	</div>
 
-	<a class="paper-preview" href="https://arxiv.org/abs/2512.24601" target="_blank" rel="noopener noreferrer">
-		<img src="/rlm-arxiv-preview.png" alt="Top half of the first page of the Recursive Language Models arXiv paper" />
-		<span>arXiv:2512.24601</span>
-	</a>
+	<pre class="rlm-tree-example">Root RLM (depth=0)
+├── Sub-RLM A (depth=1)
+│   ├── LLM A1 (depth=2)
+│   └── LLM A2 (depth=2)
+└── Sub-RLM B (depth=1)
+    ├── LLM B1 (depth=2)
+    └── LLM B2 (depth=2)</pre>
 </div>

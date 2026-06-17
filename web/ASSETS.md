@@ -10,6 +10,7 @@ provenance cannot be verified.
 
 | File | Source / subject | Used from |
 | --- | --- | --- |
+| `ai-engineer-progression-transparent.png` | Custom AI engineer progression illustration for this talk | `src/slides/outcomes.md` |
 | `dynamic-workflows-preview-compact.png` | Claude Code dynamic workflows blog preview, https://claude.com/blog/introducing-dynamic-workflows-in-claude-code | `src/slides/workflows.md` |
 | `dynamic-workflows-preview.png` | Claude Code dynamic workflows blog preview, https://claude.com/blog/introducing-dynamic-workflows-in-claude-code | Static reference asset |
 | `favicon.svg` | Custom presentation favicon for this talk | `src/app.html` |
@@ -23,5 +24,5 @@ provenance cannot be verified.
 | `tweet-claude-subagents-no.png` | Public X post preview, https://x.com/garybasin/status/1978608030787784780 | `src/slides/claude-rlm.md` |
 | `twitter-recursive-coding-agents.png` | Generated capture of the title slide for X/Twitter card previews | `src/app.html` |
 | `x-card-raw-works-arc-prize-symbolica-agent-verification-confusion.png` | Public X post preview, https://x.com/raw_works/status/2037542109943628013 | `src/lib/BenchmarkTweetsCarousel.svelte` |
-| `x-card-raw-works-rlms-are-the-new-reasoning-models-article.png` | RAW.works article/social-card preview, https://raw.works/rlms-are-the-new-reasoning-models/ | `src/slides/rlms-new-reasoning-models.md` |
+| `x-card-raw-works-rlms-are-the-new-reasoning-models-article.png` | Public X post preview, https://x.com/raw_works/status/2046240194999755153 | `src/slides/rlms-new-reasoning-models.md` |
 | `x-card-sumeet-motwani-longcot-open-harness-gpt-5-2-rlm-sota.png` | Public X post preview, https://x.com/sumeetrm/status/2046014614987550941 | `src/lib/BenchmarkTweetsCarousel.svelte` |

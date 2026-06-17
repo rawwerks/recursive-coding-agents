@@ -579,6 +579,34 @@ function assertPretextTextAudit(caseName, result) {
 	}
 }
 
+function assertOutcomesProgression(caseName, result) {
+	const progression = result.outcomesProgression;
+	if (!progression) fail(`${caseName}: outcomes progression image was not measurable.`);
+	if (progression.centerDrift > 2) {
+		fail(`${caseName}: outcomes progression image is not centered.\n${JSON.stringify(progression, null, 2)}`);
+	}
+	if (progression.bottomGap < 42 || progression.bottomGap > Math.max(170, progression.viewportHeight * 0.2)) {
+		fail(
+			`${caseName}: outcomes progression image is not anchored in the bottom zone.\n${JSON.stringify(progression, null, 2)}`
+		);
+	}
+	if (progression.textGap < 28) {
+		fail(`${caseName}: outcomes progression image crowds the text.\n${JSON.stringify(progression, null, 2)}`);
+	}
+	if (progression.width < Math.min(260, progression.viewportWidth * 0.62)) {
+		fail(`${caseName}: outcomes progression image rendered too small.\n${JSON.stringify(progression, null, 2)}`);
+	}
+}
+
+function assertNoImageTextOverlap(caseName, result) {
+	if (!result.imageTextOverlaps) fail(`${caseName}: image/text overlap audit did not run.`);
+	if (result.imageTextOverlaps.length > 0) {
+		fail(
+			`${caseName}: images overlap visible text.\n${JSON.stringify(result.imageTextOverlaps, null, 2)}`
+		);
+	}
+}
+
 await assertStaticLayoutContract();
 
 let vite;
@@ -617,8 +645,109 @@ try {
 		);
 		const dotVisualLeft = Math.min(...dotVisualRects.map((rect) => rect.left));
 		const dotVisualRight = Math.max(...dotVisualRects.map((rect) => rect.right));
+		const visibleRect = (element) => {
+			const style = getComputedStyle(element);
+			if (style.display === 'none' || style.visibility === 'hidden' || Number(style.opacity) === 0) {
+				return null;
+			}
+			const r = element.getBoundingClientRect();
+			if (r.width <= 0 || r.height <= 0) return null;
+			return r;
+		};
+		const textSelector = [
+			'h1',
+			'h2',
+			'h3',
+			'p',
+			'li',
+			'a:not(:has(img))',
+			'strong',
+			'em',
+			'span',
+			'code',
+			'pre'
+		].join(',');
+		const imageTextOverlaps = [];
+		for (const slide of slides) {
+			const images = Array.from(slide.querySelectorAll('.content img'))
+				.map((element) => ({ element, rect: visibleRect(element) }))
+				.filter((item) => item.rect);
+			const textElements = Array.from(slide.querySelectorAll(\`.content \${textSelector}\`))
+				.filter((element) => {
+					if (element.querySelector('img')) return false;
+					if (!element.textContent?.trim()) return false;
+					if (element.closest('.dots, .next-slide-cue')) return false;
+					return true;
+				})
+				.map((element) => ({ element, rect: visibleRect(element) }))
+				.filter((item) => item.rect);
+
+			for (const image of images) {
+				for (const text of textElements) {
+					const xOverlap =
+						Math.min(image.rect.right, text.rect.right) - Math.max(image.rect.left, text.rect.left);
+					const yOverlap =
+						Math.min(image.rect.bottom, text.rect.bottom) - Math.max(image.rect.top, text.rect.top);
+					if (xOverlap > 1 && yOverlap > 1) {
+						imageTextOverlaps.push({
+							slide: slide.id,
+							label: slide.getAttribute('data-label') ?? '',
+							imageClass: image.element.className || image.element.parentElement?.className || '',
+							text: text.element.textContent.trim().replace(/\\s+/g, ' ').slice(0, 90),
+							xOverlap: Number(xOverlap.toFixed(2)),
+							yOverlap: Number(yOverlap.toFixed(2)),
+							image: {
+								left: Number(image.rect.left.toFixed(2)),
+								top: Number(image.rect.top.toFixed(2)),
+								right: Number(image.rect.right.toFixed(2)),
+								bottom: Number(image.rect.bottom.toFixed(2))
+							},
+							textRect: {
+								left: Number(text.rect.left.toFixed(2)),
+								top: Number(text.rect.top.toFixed(2)),
+								right: Number(text.rect.right.toFixed(2)),
+								bottom: Number(text.rect.bottom.toFixed(2))
+							}
+						});
+					}
+				}
+			}
+		}
+		const outcomesSlide = slides.find(
+			(slide) => slide.getAttribute('data-label') === 'We all want outcomes'
+		);
+		const progression = outcomesSlide?.querySelector('.outcomes-progression img');
+		const progressionFigure = outcomesSlide?.querySelector('.outcomes-progression');
+		const progressionRect = progression?.getBoundingClientRect();
+		const progressionFigureRect = progressionFigure?.getBoundingClientRect();
+		const outcomesSlideRect = outcomesSlide?.getBoundingClientRect();
+		const textRects = outcomesSlide
+			? Array.from(outcomesSlide.querySelectorAll('.outcomes-copy > *'))
+					.map((element) => element.getBoundingClientRect())
+					.filter((rect) => rect.width > 0 && rect.height > 0)
+			: [];
+		const textBottom = textRects.length ? Math.max(...textRects.map((rect) => rect.bottom)) : null;
 
 		return {
+			imageTextOverlaps,
+			outcomesProgression:
+				progressionRect && progressionFigureRect && outcomesSlideRect && textBottom !== null
+					? {
+							centerDrift: Number(
+								Math.abs(
+									progressionRect.left +
+										progressionRect.width / 2 -
+										(outcomesSlideRect.left + outcomesSlideRect.width / 2)
+								).toFixed(2)
+							),
+							bottomGap: Number((outcomesSlideRect.bottom - progressionRect.bottom).toFixed(2)),
+							textGap: Number((progressionFigureRect.top - textBottom).toFixed(2)),
+							width: Number(progressionRect.width.toFixed(2)),
+							height: Number(progressionRect.height.toFixed(2)),
+							viewportWidth: window.innerWidth,
+							viewportHeight: window.innerHeight
+						}
+					: null,
 			dotRail:
 				dotRailRect && dotVisualRects.length > 0 && contentRects.length > 0
 					? {
@@ -671,6 +800,7 @@ try {
 
 	for (const viewport of [
 		{ name: 'desktop', width: 1440, height: 900 },
+		{ name: 'wide-desktop', width: 2092, height: 1100 },
 		{ name: 'short-desktop', width: 1366, height: 768 },
 		{ name: 'short-wide-desktop', width: 1280, height: 720 },
 		{ name: 'mobile', width: 390, height: 844 },
@@ -678,6 +808,8 @@ try {
 	]) {
 		const result = await evaluateInPage(chromium.page, viewport, layoutExpression);
 		assertUnifiedWidths(viewport.name, result);
+		assertNoImageTextOverlap(viewport.name, result);
+		assertOutcomesProgression(viewport.name, result);
 		console.log(
 			`${viewport.name} slide layout assertions passed (${result.items.length} slides, width ${result.items[0].width}px).`
 		);
@@ -1145,6 +1277,34 @@ try {
 							second
 						});
 					}
+				}
+			}
+
+			const bridgeTrees = document.querySelector('.bridge-tree-comparison');
+			if (bridgeTrees) {
+				const panels = Array.from(bridgeTrees.querySelectorAll('.bridge-tree-panel')).filter(visible);
+				const trees = Array.from(bridgeTrees.querySelectorAll('.rlm-tree-example')).filter(visible);
+				checked.push({ rule: 'bridge-tree-comparison', panels: panels.length, trees: trees.length });
+				if (panels.length !== 2 || trees.length !== 2) {
+					push('bridge-tree-comparison', 'bridge tree comparison is missing expected panels or trees');
+				} else if (desktop) {
+					const [leftPanel, rightPanel] = panels.map(rect);
+					const [leftTree, rightTree] = trees.map(rect);
+					if (!near(leftPanel.centerY, rightPanel.centerY, 3)) {
+						push('bridge-tree-comparison', 'tree panels are not vertically center-aligned', {
+							leftPanel,
+							rightPanel
+						});
+					}
+					if (!near(leftTree.top, rightTree.top, 3) || !near(leftTree.bottom, rightTree.bottom, 3)) {
+						push('bridge-tree-comparison', 'tree text boxes are not vertically aligned', {
+							leftTree,
+							rightTree
+						});
+					}
+				} else {
+					orderedVertically('bridge-tree-comparison-mobile', panels, 6);
+					sameHorizontalEdges('bridge-tree-comparison-mobile', panels[0], panels[1], 2);
 				}
 			}
 

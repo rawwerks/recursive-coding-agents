@@ -7,6 +7,7 @@ export const slideOrder = [
 	'too-hot-to-benchmark',
 	'rlm-not',
 	'towards-recursive-coding-agents',
+	'towards-recursive-coding-agents-trees',
 	'ypi',
 	'other-notable-projects',
 	'claude-rlm',

@@ -22,7 +22,8 @@
 	// client-only progressive enhancement, so this avoids any hydration mismatch.
 	let slides = $state<{ label: string }[]>([]);
 	let nextCueTimer: ReturnType<typeof setTimeout> | null = null;
-	const nextCueDelay = 20_000;
+	const firstSlideNextCueDelay = 5_000;
+	const defaultNextCueDelay = 10_000;
 
 	const reduceMotion = () =>
 		typeof window !== 'undefined' &&
@@ -43,6 +44,7 @@
 		nextCueVisible = false;
 		const slideCount = slides.length;
 		if (!mounted || slideCount === 0 || slideIndex >= slideCount - 1) return;
+		const nextCueDelay = slideIndex === 0 ? firstSlideNextCueDelay : defaultNextCueDelay;
 
 		nextCueTimer = setTimeout(() => {
 			nextCueVisible = mounted && active === slideIndex && slides.length === slideCount;

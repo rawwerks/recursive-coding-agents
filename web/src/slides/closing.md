@@ -4,7 +4,7 @@ variant: title
 eyebrow: "Until Next Time..."
 ---
 
-# Always Recurse Responsibly
+# Please Recurse Responsibly
 
 **Raymond Weitekamp**
 

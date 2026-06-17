@@ -997,7 +997,7 @@ try {
 		const originalMatchMedia = window.matchMedia;
 		const originalSetTimeout = window.setTimeout;
 		window.setTimeout = (handler, timeout = 0, ...args) =>
-			originalSetTimeout(handler, timeout >= 19000 ? 250 : timeout, ...args);
+			originalSetTimeout(handler, timeout >= 4900 ? 250 : timeout, ...args);
 		window.matchMedia = (query) => {
 			if (query.includes('prefers-reduced-motion')) {
 				return {
@@ -1070,6 +1070,7 @@ try {
 			return { results };
 		} finally {
 			window.matchMedia = originalMatchMedia;
+			window.setTimeout = originalSetTimeout;
 		}
 	})())`;
 
@@ -1093,8 +1094,11 @@ try {
 
 		const originalMatchMedia = window.matchMedia;
 		const originalSetTimeout = window.setTimeout;
-		window.setTimeout = (handler, timeout = 0, ...args) =>
-			originalSetTimeout(handler, timeout >= 19000 ? 250 : timeout, ...args);
+		const scheduledCueDelays = [];
+		window.setTimeout = (handler, timeout = 0, ...args) => {
+			if (timeout === 5000 || timeout === 10000) scheduledCueDelays.push(timeout);
+			return originalSetTimeout(handler, timeout >= 4900 ? 250 : timeout, ...args);
+		};
 		window.matchMedia = (query) => {
 			if (query.includes('prefers-reduced-motion')) {
 				return {
@@ -1163,6 +1167,12 @@ try {
 			const firstCue = await waitForVisibleCue('#slide-2');
 			if (!firstCue) {
 				return { error: 'Deck must reveal a global .next-slide-cue after slide dwell time.' };
+			}
+			if (!scheduledCueDelays.includes(5000)) {
+				return {
+					error: 'First slide must schedule the next-slide cue after 5 seconds.',
+					scheduledCueDelays
+				};
 			}
 			if (!(await waitForCueHref('#slide-2'))) {
 				return {
@@ -1240,6 +1250,12 @@ try {
 					error: 'Global next slide cue must render on slide 2 after dwell time.',
 					top: topSlideId(),
 					href: cue()?.getAttribute('href') ?? null
+				};
+			}
+			if (!scheduledCueDelays.includes(10000)) {
+				return {
+					error: 'Non-first slides must schedule the next-slide cue after 10 seconds.',
+					scheduledCueDelays
 				};
 			}
 

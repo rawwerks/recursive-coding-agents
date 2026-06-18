@@ -352,10 +352,10 @@
 	}
 	:global(.slide .content .prose .prose-program) {
 		display: grid;
-		grid-template-rows: auto auto 1fr auto;
+		grid-template-rows: auto auto auto auto;
 		gap: clamp(0.55rem, 1.3vw, 0.82rem);
 		align-content: start;
-		min-height: clamp(24rem, 47dvh, 31rem);
+		min-height: 0;
 		padding: clamp(0.95rem, 2vw, 1.35rem);
 		border: 1px solid color-mix(in oklch, var(--deck-text) 18%, transparent);
 		border-radius: 8px;
@@ -397,6 +397,7 @@
 	:global(.slide .content .prose .prose-program-points) {
 		display: grid;
 		gap: 0.42rem;
+		align-self: start;
 		margin: 0;
 		padding: 0;
 		list-style: none;
@@ -426,8 +427,9 @@
 		color: color-mix(in oklch, var(--deck-text) 88%, var(--deck-muted));
 	}
 	:global(.slide .content .prose .prose-program pre) {
+		align-self: start;
 		overflow: hidden;
-		margin: auto 0 0;
+		margin: 0;
 		padding: clamp(0.8rem, 1.6vw, 1.05rem);
 		border: 1px solid color-mix(in oklch, var(--deck-text) 13%, transparent);
 		border-radius: 6px;
@@ -453,7 +455,7 @@
 		display: grid;
 		align-content: end;
 		overflow: hidden;
-		min-height: var(--ftw-pretext-proof-height, clamp(25rem, 62dvh, 40rem));
+		min-height: var(--ftw-pretext-proof-height, clamp(27.5rem, 54dvh, 30.5rem));
 		padding: clamp(1.25rem, 3vw, 2.2rem);
 		border-radius: 8px;
 		background: var(--deck-text);
@@ -1264,30 +1266,32 @@
 			font-size: 0.64rem;
 		}
 		:global(.slide .content .prose .prose-program-grid) {
-			gap: 0.72rem;
-			margin-top: 0.7rem;
+			gap: 0.9rem;
+			margin-top: 0.85rem;
 		}
 		:global(.slide .content .prose .prose-program) {
-			gap: 0.38rem;
-			padding: 0.72rem;
+			gap: 0.5rem;
+			min-height: 0;
+			padding: 0.85rem;
 		}
 		:global(.slide .content .prose .prose-program-label) {
-			font-size: 0.62rem;
+			font-size: 0.68rem;
 		}
 		:global(.slide .content .prose .prose-program strong) {
-			font-size: 0.92rem;
+			font-size: 1.08rem;
+			line-height: 1.1;
 		}
 		:global(.slide .content .prose .prose-program-points) {
-			gap: 0.25rem;
+			gap: 0.32rem;
 		}
 		:global(.slide .content .prose .prose-program-points li) {
-			font-size: 0.72rem;
-			line-height: 1.18;
+			font-size: 0.82rem;
+			line-height: 1.24;
 		}
 		:global(.slide .content .prose .prose-program pre) {
-			padding: 0.46rem;
-			font-size: 0.58rem;
-			line-height: 1.18;
+			padding: 0.58rem;
+			font-size: 0.68rem;
+			line-height: 1.28;
 		}
 	}
 	:global(.slide .content .prose .mismanaged-previews .url-preview img) {

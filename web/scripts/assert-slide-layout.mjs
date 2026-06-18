@@ -1595,6 +1595,38 @@ try {
 							b
 						});
 					}
+
+					for (const [index, card] of cards.entries()) {
+						const cardRect = rect(card);
+						const rows = getComputedStyle(card).gridTemplateRows;
+						const bullets = Array.from(card.querySelectorAll('.prose-program-points li')).filter(visible);
+						const pre = card.querySelector('pre');
+						const bulletRects = bullets.map(rect);
+						const bulletGaps = bulletRects.slice(1).map((item, i) => item.top - bulletRects[i].top);
+						const maxBulletGap = bulletGaps.length ? Math.max(...bulletGaps) : 0;
+						const preRect = pre ? rect(pre) : null;
+						if (/\b1fr\b/.test(rows)) {
+							push('prose-program-grid', 'prose program card uses an unresolved 1fr row', {
+								index,
+								rows
+							});
+						}
+						if (maxBulletGap > 52) {
+							push('prose-program-grid', 'prose program bullets are vertically stretched apart', {
+								index,
+								maxBulletGap,
+								bulletGaps,
+								card: cardRect
+							});
+						}
+						if (preRect && preRect.height > cardRect.height * 0.38) {
+							push('prose-program-grid', 'prose program code block dominates card height', {
+								index,
+								card: cardRect,
+								pre: preRect
+							});
+						}
+					}
 				} else if (!desktop && cards.length === 2) {
 					sameHorizontalEdges('prose-program-mobile-stack', cards[0], cards[1]);
 					orderedVertically('prose-program-mobile-stack', cards, 8);
@@ -1841,31 +1873,40 @@ try {
 
 		try {
 			const checks = [
-				['1', 'slide-1'],
-				['2', 'slide-2'],
-				['3', 'slide-3'],
-				['4', 'slide-4'],
-				['0', 'slide-10']
+				['row 1', { key: '1', code: 'Digit1' }, 'slide-1'],
+				['row 2', { key: '2', code: 'Digit2' }, 'slide-2'],
+				['row 3', { key: '3', code: 'Digit3' }, 'slide-3'],
+				['row 4', { key: '4', code: 'Digit4' }, 'slide-4'],
+				['row 0', { key: '0', code: 'Digit0' }, 'slide-10'],
+				['shifted row 1', { key: '!', code: 'Digit1', shiftKey: true }, 'slide-1'],
+				['shifted row 0', { key: ')', code: 'Digit0', shiftKey: true }, 'slide-10'],
+				['numpad 1', { key: 'End', code: 'Numpad1' }, 'slide-1'],
+				['numpad 0', { key: 'Insert', code: 'Numpad0' }, 'slide-10']
 			];
 			const results = [];
-			for (const [key, expected] of checks) {
-				const event = new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true });
+			for (const [label, init, expected] of checks) {
+				const event = new KeyboardEvent('keydown', { ...init, bubbles: true, cancelable: true });
 				window.dispatchEvent(event);
 				const reached = await waitForSlide(expected);
 				results.push({
-					key,
+					label,
+					key: init.key,
+					code: init.code,
 					expected,
 					reached,
 					defaultPrevented: event.defaultPrevented,
+					hash: window.location.hash,
 					active: activeSlideId(),
 					top: topSlideId()
 				});
 			}
 
-			const failed = results.find((result) => !result.reached || !result.defaultPrevented);
+			const failed = results.find(
+				(result) => !result.reached || !result.defaultPrevented || result.hash !== \`#\${result.expected}\`
+			);
 			if (failed) {
 				return {
-					error: \`Number key \${failed.key} did not navigate to \${failed.expected}.\`,
+					error: \`Number key \${failed.label} did not navigate to \${failed.expected}.\`,
 					results
 				};
 			}
@@ -1894,7 +1935,7 @@ try {
 		);
 		fail(error.message);
 	}
-	console.log('keyboard slide shortcuts passed (1-4 and 0 -> slide 10).');
+	console.log('keyboard slide shortcuts passed (row/numpad 1-4 and 0 -> slide 10).');
 
 	const scrollCueExpression = `((async () => {
 		const deck = document.querySelector('.deck');

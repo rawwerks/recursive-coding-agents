@@ -18,7 +18,8 @@ page.
 
 - **Responsive deck:** slides reflow instead of shrinking a fixed canvas.
 - **Deep links:** every slide has a stable `#slide-N` URL.
-- **Keyboard navigation:** arrow keys, PageUp/PageDown, Home/End, and Space.
+- **Keyboard navigation:** arrow keys, PageUp/PageDown, Home/End, Space, and
+  1-9 / 0 slide shortcuts.
 - **Evidence-first design:** paper previews, article cards, repo cards, and
   public screenshot references support the claims.
 - **Reduced-motion support:** scroll and entrance animations respect system

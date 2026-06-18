@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { replaceState } from '$app/navigation';
 	import type { Snippet } from 'svelte';
 	import { onMount } from 'svelte';
 	import { createDeckRegistry } from './deck';
@@ -57,6 +58,9 @@
 		const i = Math.max(0, Math.min(slides.length - 1, index));
 		const target = deck?.querySelector<HTMLElement>(`#slide-${i + 1}`);
 		target?.scrollIntoView({ behavior: reduceMotion() ? 'auto' : 'smooth', block: 'start' });
+		if (target && window.location.hash !== `#slide-${i + 1}`) {
+			replaceState(`#slide-${i + 1}`, {});
+		}
 	}
 
 	function goToNext(event: MouseEvent) {
@@ -70,6 +74,10 @@
 		if (event.altKey || event.ctrlKey || event.metaKey) return null;
 		if (/^[1-9]$/.test(event.key)) return Number(event.key) - 1;
 		if (event.key === '0') return 9;
+		const codeMatch = /^(?:Digit|Numpad)([0-9])$/.exec(event.code);
+		if (codeMatch) {
+			return codeMatch[1] === '0' ? 9 : Number(codeMatch[1]) - 1;
+		}
 		return null;
 	}
 

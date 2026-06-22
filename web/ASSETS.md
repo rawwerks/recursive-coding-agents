@@ -12,14 +12,10 @@ provenance cannot be verified.
 | --- | --- | --- |
 | `ai-engineer-progression-transparent.png` | Custom AI engineer progression illustration for this talk | `src/slides/outcomes.md` |
 | `claude-code-harness-for-every-task-dynamic-workflows.png` | Claude Code dynamic workflows image, https://cdn.prod.website-files.com/68a44d4040f98a4adf2207b6/6a1f16d86247e586b929a407_image10.png. Source page: https://claude.com/blog/a-harness-for-every-task-dynamic-workflows-in-claude-code | `src/slides/workflows.md` |
-| `dynamic-workflows-preview-compact.png` | Claude Code dynamic workflows blog preview, https://claude.com/blog/introducing-dynamic-workflows-in-claude-code | `src/slides/workflows.md` |
-| `dynamic-workflows-preview.png` | Claude Code dynamic workflows blog preview, https://claude.com/blog/introducing-dynamic-workflows-in-claude-code | Static reference asset |
 | `favicon.svg` | Custom presentation favicon for this talk | `src/app.html` |
 | `og-recursive-coding-agents.png` | Generated capture of the title slide for Open Graph previews | `src/app.html` |
 | `mgh-preview.png` | The Mismanaged Geniuses Hypothesis article preview, https://alexzhang13.github.io/blog/2026/mgh/ | `src/slides/mismanaged.md` |
-| `rlm-agent-map.png` | Recursive coding-agent/RLM diagram asset for this talk | Static reference asset |
 | `rlm-arxiv-preview.png` | Recursive Language Models arXiv paper preview, https://arxiv.org/abs/2512.24601 | `src/slides/what-is-rlm.md` |
-| `rlm-check-grid.png` | RLM rubric grid asset for this talk | Static reference asset |
 | `turing-openprose-preview.png` | Turing Post OpenProse article preview, https://www.turingpost.com/p/openprose-a-language-for-reliable-agents | `src/slides/mismanaged.md` |
 | `tweet-claude-rlm-yes.png` | Public X post preview, https://x.com/lateinteraction/status/2060078643133763839 | `src/slides/claude-rlm.md` |
 | `tweet-claude-subagents-no.png` | Public X post preview, https://x.com/garybasin/status/1978608030787784780 | `src/slides/claude-rlm.md` |
